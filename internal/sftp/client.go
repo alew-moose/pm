@@ -17,13 +17,6 @@ type Client struct {
 	config *Config
 }
 
-type Config struct {
-	Host string
-	Port string
-	User string
-	Path string // Path to packages dir
-}
-
 func NewClient(config *Config) (*Client, error) {
 	sshClient, err := sshConnect(config.Host, config.Port, config.User)
 	if err != nil {

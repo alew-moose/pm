@@ -116,7 +116,7 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 
 	for _, path := range paths {
 		if err := u.addFile(tw, path); err != nil {
-			return "", fmt.Errorf("upload %q: %s", err)
+			return "", fmt.Errorf("upload %q: %s", path, err)
 		}
 	}
 
