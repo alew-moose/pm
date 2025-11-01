@@ -1,3 +1,11 @@
 # Тестовое задание - пакетный менеджер
 
 [Задание](task.md)
+
+
+- [ ] TODO:
+  - [ ] что означает "packets" в файле для упаковки packet.json?
+  - [ ] version поменьше взять uint?
+  - [ ] remove "failed to"
+  - [ ] в Exclude * считается за .*
+  - [ ] verbose

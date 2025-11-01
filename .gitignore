@@ -1,1 +1,7 @@
 pm
+packet.json
+packet.yaml
+packages.json
+packages.yaml
+print_yaml.pl
+archive_this*
