@@ -19,7 +19,7 @@ type Config struct {
 	Targets []Target       `json:"targets" yaml:"targets"`
 }
 
-// TODO XXX
+// TODO: rename (package name?)
 func (c *Config) FileName() string {
 	return fmt.Sprintf("%s-%s", c.Name, c.Version)
 }

@@ -9,23 +9,35 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/alew-moose/pm/internal/sftp"
 )
 
 type PackageUploader struct {
-	config *Config
+	config     *Config
+	sftpClient *sftp.Client
 }
 
-func New(config *Config) (*PackageUploader, error) {
+func New(config *Config, sftpClient *sftp.Client) (*PackageUploader, error) {
 	if err := config.Validate(); err != nil {
 		return nil, fmt.Errorf("validate config: %s", err)
 	}
 	pu := &PackageUploader{
-		config: config,
+		config:     config,
+		sftpClient: sftpClient,
 	}
 	return pu, nil
 }
 
 func (u *PackageUploader) Upload() error {
+	packageExists, err := u.sftpClient.PackageExists(u.config.FileName())
+	if err != nil {
+		return fmt.Errorf("check if package exists: %s", err)
+	}
+	if packageExists {
+		return fmt.Errorf("package %s already exists", u.config.FileName())
+	}
+
 	paths, err := u.getPaths()
 	if err != nil {
 		return fmt.Errorf("get paths: %s", err)
@@ -38,6 +50,10 @@ func (u *PackageUploader) Upload() error {
 
 	// XXX log verbose
 	log.Printf("archive: %s\n", archivePath)
+
+	if err := u.uploadArchive(archivePath); err != nil {
+		return fmt.Errorf("upload archive: %s", err)
+	}
 
 	return nil
 }
@@ -146,5 +162,12 @@ func (u *PackageUploader) addFile(tw *tar.Writer, path string) error {
 		return fmt.Errorf("close %q: %s", file.Name(), err)
 	}
 
+	return nil
+}
+
+func (u *PackageUploader) uploadArchive(path string) error {
+	if err := u.sftpClient.UploadPackage(u.config.FileName(), path); err != nil {
+		return fmt.Errorf("sftp client upload package: %s", err)
+	}
 	return nil
 }
