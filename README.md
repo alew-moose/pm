@@ -4,6 +4,8 @@
 
 
 - [ ] TODO:
+  - [ ] validate config
+  - [ ] create path?
   - [ ] что означает "packets" в файле для упаковки packet.json?
   - [ ] version поменьше взять uint?
   - [ ] remove "failed to"

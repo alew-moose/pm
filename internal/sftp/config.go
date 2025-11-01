@@ -14,10 +14,6 @@ type Config struct {
 }
 
 func ConfigFromFile(path string) (*Config, error) {
-	if path == "" {
-		path = fmt.Sprintf("%s/.pm.json", os.Getenv("HOME"))
-	}
-
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
