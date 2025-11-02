@@ -79,19 +79,20 @@ func NewPackageDownloader(config *Config, sftpClient *sftp.Client) (*PackageDown
 }
 
 func (d *PackageDownloader) Download() error {
+	log.Printf("download packages: %s", stringersSliceToString(d.config.Packages))
 	packages, err := d.findPackages()
 	if err != nil {
 		return fmt.Errorf("find packages: %s", err)
 	}
 
 	for _, p := range packages {
-		// TODO: log verbose
+		log.Printf("downloading package %s\n", p)
 		archivePath, err := d.sftpClient.DownloadPackage(p)
 		if err != nil {
 			return fmt.Errorf("download package: %s", err)
 		}
 
-		// TODO: log verbose
+		log.Printf("extracting %s\n", archivePath)
 		if err := d.extractArchive(archivePath); err != nil {
 			return fmt.Errorf("extract archive: %s", err)
 		}
@@ -120,6 +121,7 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 				continue
 			}
 			if foundPV, ok := found[pvs]; !ok || pvs.VersionSpec.Version.GreaterThan(foundPV.Version) {
+				log.Printf("found packages for %s: %s\n", pvs, pv)
 				found[pvs] = pv
 			}
 		}

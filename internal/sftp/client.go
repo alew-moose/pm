@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
 
@@ -133,6 +134,8 @@ func sshConnect(host, port, user string) (*ssh.Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open SSH_AUTH_SOCK: %s", err)
 	}
+
+	log.Printf("connecting to %s:%s as %s", host, port, user)
 
 	agentClient := agent.NewClient(conn)
 	config := &ssh.ClientConfig{
