@@ -11,6 +11,8 @@
     - [ ] сравнение версий
     - [ ] absolute paths?
     - [ ] exclude re
+    - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
+    - [ ] working directory
     - [ ] нет возможности рекурсивно добавить файлы (double star)
     - [ ] ...
   - [ ] packageDownloader -> downloader && packageUploader -> uploader ? Или наоборот?
@@ -18,9 +20,9 @@
   - [X] log verbose:
     - [X] downloader
     - [X] uploader
-  - [ ] regexp replace all -> strings replace all?
+  - [X] regexp replace all -> strings replace all?
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
-  - [ ] create path unless exists (in constructor?)
+  - [X] create path unless exists (in constructor?)
   - [ ] проверить, что сохраняются пермишны
   - [ ] print working directory?
   - [ ] move package version & package version spec to pkg? + tests ?

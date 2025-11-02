@@ -34,7 +34,14 @@ func NewClient(config *Config) (*Client, error) {
 		client: sftpClient,
 		config: config,
 	}
+	if err := client.CreatePackagesDirUnlessExists(); err != nil {
+		return nil, fmt.Errorf("create packages dir: %s", err)
+	}
 	return client, nil
+}
+
+func (c *Client) CreatePackagesDirUnlessExists() error {
+	return c.client.MkdirAll(c.config.Path)
 }
 
 // TODO: version string->version
