@@ -3,11 +3,13 @@
 [Задание](task.md)
 
 
-- [ ] TODO:
-  - [ ] validate config
+- [.] TODO:
+  - [X] validate config
   - [ ] regexp replace all -> strings replace all?
   - [ ] create path?
-  - [ ] что означает "packets" в файле для упаковки packet.json?
+  - [X] что означает "packets" в файле для упаковки packet.json?
+  - [ ] uploader:
+    - [ ] download packets
   - [ ] version поменьше взять uint?
   - [ ] remove "failed to"
   - [ ] в Exclude * считается за .*

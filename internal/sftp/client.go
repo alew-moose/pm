@@ -18,6 +18,9 @@ type Client struct {
 }
 
 func NewClient(config *Config) (*Client, error) {
+	if err := config.Validate(); err != nil {
+		return nil, fmt.Errorf("validate config: %s", err)
+	}
 	sshClient, err := sshConnect(config.Host, config.Port, config.User)
 	if err != nil {
 		return nil, fmt.Errorf("ssh connect: %s", err)

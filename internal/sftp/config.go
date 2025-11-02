@@ -2,6 +2,7 @@ package sftp
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 )
@@ -11,6 +12,22 @@ type Config struct {
 	Port string
 	User string
 	Path string // Path to packages dir
+}
+
+func (c *Config) Validate() error {
+	if c.Host == "" {
+		return errors.New("host is empty")
+	}
+	if c.Port == "" {
+		return errors.New("port is empty")
+	}
+	if c.User == "" {
+		return errors.New("user is empty")
+	}
+	if c.Path == "" {
+		return errors.New("path is empty")
+	}
+	return nil
 }
 
 func ConfigFromFile(path string) (*Config, error) {
