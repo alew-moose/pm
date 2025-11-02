@@ -61,9 +61,8 @@ func (c *Client) PackageExists(name string) (bool, error) {
 
 // TODO: rename all name -> packageName ?
 func (c *Client) UploadPackage(packageName string, archivePath string) error {
+	remotePath := c.packagePath(packageName)
 	log.Printf("uploading %s as package %s\n", archivePath, packageName)
-	// TODO: refactor
-	remotePath := fmt.Sprintf("%s/%s", c.config.Path, packageName)
 
 	srcFile, err := os.Open(archivePath)
 	if err != nil {
@@ -95,8 +94,7 @@ func (c *Client) UploadPackage(packageName string, archivePath string) error {
 }
 
 func (c *Client) DownloadPackage(packageName string) (string, error) {
-	// TODO: refactor
-	remotePath := fmt.Sprintf("%s/%s", c.config.Path, packageName)
+	remotePath := c.packagePath(packageName)
 
 	srcFile, err := c.client.OpenFile(remotePath, os.O_RDONLY)
 	if err != nil {
@@ -129,6 +127,10 @@ func (c *Client) DownloadPackage(packageName string) (string, error) {
 	// TODO: check close files?
 
 	return dstFile.Name(), nil
+}
+
+func (c *Client) packagePath(packageName string) string {
+	return fmt.Sprintf("%s/%s", c.config.Path, packageName)
 }
 
 func (c *Client) GetPackages() ([]os.FileInfo, error) {

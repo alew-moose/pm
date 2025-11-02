@@ -3,7 +3,7 @@
 [Задание](task.md)
 
 
-- [.] TODO:
+- [o] TODO:
   - [ ] readme:
     - [ ] моя интерпретация packets в файле
     - [ ] Makefile
@@ -37,7 +37,7 @@
   - [X] test ../../ paths
   - [ ] integration tests
   - [ ] shorten packageVersion -> pv & packageVersionSpec -> pvs ?
-  - [ ] sftpClient refactor : remotePath method
+  - [X] sftpClient refactor : remotePath method
   - [ ] сделать архиватор отдельно (упаковка, распаковка)
   - [ ] enable more linters? https://golangci-lint.run/docs/linters/configuration/
   - [ ] там, где var smth, var error: может, сделать именованные возвращаемые?
