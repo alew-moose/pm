@@ -86,7 +86,6 @@ func (d *PackageDownloader) Download() error {
 	}
 
 	for _, p := range packages {
-		log.Printf("downloading package %s\n", p)
 		archivePath, err := d.sftpClient.DownloadPackage(p)
 		if err != nil {
 			return fmt.Errorf("download package: %s", err)
@@ -149,6 +148,7 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 		packages = append(packages, pv.String())
 	}
 
+	// TODO: надо чтобы packages были отсортированы как в конфиге
 	return packages, nil
 }
 

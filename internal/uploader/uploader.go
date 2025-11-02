@@ -52,8 +52,11 @@ func (u *PackageUploader) Upload() error {
 		return fmt.Errorf("package %s already exists", packageName)
 	}
 
-	if err := u.downloader.Download(); err != nil {
-		return fmt.Errorf("download dependencies: %s", err)
+	if len(u.config.Dependencies) > 0 {
+		log.Println("downloading dependencies")
+		if err := u.downloader.Download(); err != nil {
+			return fmt.Errorf("download dependencies: %s", err)
+		}
 	}
 
 	paths, err := u.getPaths()
@@ -72,9 +75,6 @@ func (u *PackageUploader) Upload() error {
 			log.Printf("remove %q: %s", archivePath, err)
 		}
 	}()
-
-	// XXX log verbose
-	log.Printf("archive: %s\n", archivePath)
 
 	if err := u.sftpClient.UploadPackage(u.config.FileName(), archivePath); err != nil {
 		return fmt.Errorf("sftp client upload package: %s", err)
@@ -143,6 +143,7 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("create temp file: %s", err)
 	}
+	log.Printf("created archive %s\n", f.Name())
 	defer func() {
 		_ = f.Close()
 	}()
@@ -157,6 +158,7 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 	}()
 
 	for _, path := range paths {
+		log.Printf("adding file %s\n", path)
 		if err := u.addFile(tw, path); err != nil {
 			return "", fmt.Errorf("upload %q: %s", path, err)
 		}

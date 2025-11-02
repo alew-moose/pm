@@ -12,11 +12,11 @@
     - [ ] absolute paths?
     - [ ] нет возможности рекурсивно добавить файлы (double star)
     - [ ] ...
-  - [ ] packageDownloader -> downloader && packageUploader -> uploader ?
+  - [ ] packageDownloader -> downloader && packageUploader -> uploader ? Или наоборот?
   - [X] validate config
-  - [ ] log verbose:
-    - [ ] downloader
-    - [ ] uploader
+  - [X] log verbose:
+    - [X] downloader
+    - [X] uploader
   - [ ] regexp replace all -> strings replace all?
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
   - [ ] create path unless exists (in constructor?)
