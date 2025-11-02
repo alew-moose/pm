@@ -67,8 +67,7 @@ func PackageVersionFromString(s string) (PackageVersion, error) {
 	return packageVersion, nil
 }
 
-// TODO: rename?
-func New(config *Config, sftpClient *sftp.Client) (*PackageDownloader, error) {
+func NewPackageDownloader(config *Config, sftpClient *sftp.Client) (*PackageDownloader, error) {
 	if err := config.Validate(); err != nil {
 		return nil, fmt.Errorf("invalid config: %s", err)
 	}

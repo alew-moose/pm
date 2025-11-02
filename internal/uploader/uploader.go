@@ -21,8 +21,7 @@ type PackageUploader struct {
 	downloader *downloader.PackageDownloader
 }
 
-// TODO: rename?
-func New(config *Config, sftpClient *sftp.Client) (*PackageUploader, error) {
+func NewPackageUploader(config *Config, sftpClient *sftp.Client) (*PackageUploader, error) {
 	if err := config.Validate(); err != nil {
 		return nil, fmt.Errorf("invalid config: %s", err)
 	}
@@ -34,7 +33,7 @@ func New(config *Config, sftpClient *sftp.Client) (*PackageUploader, error) {
 		downloaderConfig := &downloader.Config{
 			Packages: config.Dependencies,
 		}
-		pd, err := downloader.New(downloaderConfig, sftpClient)
+		pd, err := downloader.NewPackageDownloader(downloaderConfig, sftpClient)
 		if err != nil {
 			return nil, fmt.Errorf("create new downloader: %s", err)
 		}

@@ -68,7 +68,7 @@ func upload(sftpClient *sftp.Client, cmdConfigFile string) error {
 		return fmt.Errorf("parse uploader config: %s", err)
 	}
 
-	uploader, err := uploader.New(config, sftpClient)
+	uploader, err := uploader.NewPackageUploader(config, sftpClient)
 	if err != nil {
 		return fmt.Errorf("create new uploader: %s", err)
 	}
@@ -86,7 +86,7 @@ func download(sftpClient *sftp.Client, cmdConfigFile string) error {
 		return fmt.Errorf("parse downloader config: %s", err)
 	}
 
-	downloader, err := downloader.New(config, sftpClient)
+	downloader, err := downloader.NewPackageDownloader(config, sftpClient)
 	if err != nil {
 		return fmt.Errorf("create new downloader: %s", err)
 	}

@@ -5,7 +5,7 @@
 
 - [.] TODO:
   - [ ] readme:
-    - [ ] packets в файле
+    - [ ] моя интерпретация packets в файле
     - [ ] Makefile
     - [ ] config in HOME
     - [ ] сравнение версий
@@ -14,6 +14,9 @@
     - [ ] ...
   - [ ] packageDownloader -> downloader && packageUploader -> uploader ?
   - [X] validate config
+  - [ ] log verbose:
+    - [ ] downloader
+    - [ ] uploader
   - [ ] regexp replace all -> strings replace all?
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
   - [ ] create path unless exists (in constructor?)
@@ -41,6 +44,6 @@
   - [ ] %q -> '%s' ?
   - [ ] неэффективно хранить все пакеты в одной директории
   - [ ] uploader:
-  - [ ] download packets
+  - [X] download packets
   - [X] remove "failed to"
   - [ ] выводить статистику после загрузки/выгрузки? (кол-во файлов, общий размер)
