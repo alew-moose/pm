@@ -131,7 +131,7 @@ func sshConnect(host, port, user string) (*ssh.Client, error) {
 	}
 	conn, err := net.Dial("unix", socket)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open SSH_AUTH_SOCK: %s", err)
+		return nil, fmt.Errorf("open SSH_AUTH_SOCK: %s", err)
 	}
 
 	agentClient := agent.NewClient(conn)

@@ -63,12 +63,12 @@ func ConfigFromFile(path string) (*Config, error) {
 	case ".json":
 		config, err = fromJSON(b)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse json: %s", err)
+			return nil, fmt.Errorf("parse json: %s", err)
 		}
 	case ".yaml", ".yml":
 		config, err = fromYAML(b)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse yaml: %s", err)
+			return nil, fmt.Errorf("parse yaml: %s", err)
 		}
 	default:
 		return nil, fmt.Errorf("%q format is not supported", ext)

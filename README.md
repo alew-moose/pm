@@ -4,9 +4,13 @@
 
 
 - [.] TODO:
+  - [ ] readme:
+    - [ ] packets в файле
+    - [ ] ...
   - [ ] packageDownloader -> downloader && packageUploader -> uploader ?
   - [X] validate config
   - [ ] regexp replace all -> strings replace all?
+  - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
   - [ ] create path unless exists (in constructor?)
   - [ ] move package version & package version spec to pkg? + tests ?
   - [ ] name -> type PackageName + validation + move to pkg?
@@ -29,6 +33,6 @@
   - [ ] %q -> '%s' ?
   - [ ] неэффективно хранить все пакеты в одной директории
   - [ ] uploader:
-    - [ ] download packets
-  - [ ] remove "failed to"
+  - [ ] download packets
+  - [X] remove "failed to"
   - [ ] выводить статистику после загрузки/выгрузки? (кол-во файлов, общий размер)

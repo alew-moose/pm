@@ -27,7 +27,7 @@ func main() {
 
 	sftpClient, err := newSftpClient()
 	if err != nil {
-		log.Fatalf("new sftp client: %s", err)
+		log.Fatalf("failed to create sftp client: %s", err)
 	}
 
 	switch cmd {

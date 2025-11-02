@@ -58,7 +58,7 @@ func (u *PackageUploader) Upload() error {
 		err := os.Remove(archivePath)
 		// TODO: Remove error check ?
 		if err != nil {
-			log.Printf("failed to remove %q: %s", archivePath, err)
+			log.Printf("remove %q: %s", archivePath, err)
 		}
 	}()
 

@@ -38,12 +38,12 @@ func ConfigFromFile(path string) (*Config, error) {
 	case ".json":
 		config, err = fromJSON(b)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse json: %s", err)
+			return nil, fmt.Errorf("parse json: %s", err)
 		}
 	case ".yaml", ".yml":
 		config, err = fromYAML(b)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse yaml: %s", err)
+			return nil, fmt.Errorf("parse yaml: %s", err)
 		}
 	default:
 		return nil, fmt.Errorf("%q format is not supported", ext)
@@ -124,10 +124,10 @@ func (t *Target) UnmarshalJSON(b []byte) error {
 		t.Path = target
 	case map[string]any:
 		if err := t.FromMap(target); err != nil {
-			return fmt.Errorf("failed to parse target %q: %s", b, err)
+			return fmt.Errorf("parse target %q: %s", b, err)
 		}
 	default:
-		return fmt.Errorf("failed to parse target %q: unsupported type", b)
+		return fmt.Errorf("parse target %q: unsupported type", b)
 	}
 	return nil
 }
@@ -139,11 +139,11 @@ func (t *Target) UnmarshalYAML(node *yaml.Node) error {
 	case yaml.MappingNode:
 		target, err := yamlNodesToTarget(node.Content)
 		if err != nil {
-			return fmt.Errorf("failed to parse target: %s", err)
+			return fmt.Errorf("parse target: %s", err)
 		}
 		*t = target
 	default:
-		return fmt.Errorf("failed to parse target: unsupported kind %d", kind)
+		return fmt.Errorf("parse target: unsupported kind %d", kind)
 	}
 	return nil
 }
