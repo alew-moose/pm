@@ -10,6 +10,7 @@
     - [ ] config in HOME
     - [ ] сравнение версий
     - [ ] absolute paths?
+    - [ ] exclude re
     - [ ] нет возможности рекурсивно добавить файлы (double star)
     - [ ] ...
   - [ ] packageDownloader -> downloader && packageUploader -> uploader ? Или наоборот?

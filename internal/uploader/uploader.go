@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/alew-moose/pm/internal/downloader"
 	"github.com/alew-moose/pm/internal/sftp"
@@ -87,7 +88,11 @@ func (u *PackageUploader) getPaths() ([]string, error) {
 	seen := make(map[string]struct{})
 	var paths []string
 	for _, target := range u.config.Targets {
+		log.Printf("find files for target %q excluding %q\n", target.Path, target.Exclude)
 		files, err := filepath.Glob(target.Path)
+		for _, file := range files {
+			log.Printf("found file %s\n", file)
+		}
 		if err != nil {
 			return nil, fmt.Errorf("glob %q: %s", target.Path, err)
 		}
@@ -118,21 +123,19 @@ func filterPaths(paths []string, exclude string) ([]string, error) {
 		return nil, fmt.Errorf("exclude str to regexp: %s", err)
 	}
 	for _, path := range paths {
-		if !excludeRe.MatchString(path) {
+		if excludeRe.MatchString(path) {
+			log.Printf("excluded %s by /%s/\n", path, excludeRe)
+		} else {
 			filtered = append(filtered, path)
 		}
 	}
 	return filtered, nil
 }
 
-// TODO: regexp.Replace -> strings.Replace
-var globStarRe = regexp.MustCompile(`\\\*`)
-var globQuestionRe = regexp.MustCompile(`\\\?`)
-
 func excludeStrToRegexp(exclude string) (*regexp.Regexp, error) {
 	exclude = regexp.QuoteMeta(exclude)
-	exclude = globStarRe.ReplaceAllString(exclude, ".*")
-	exclude = globQuestionRe.ReplaceAllString(exclude, ".?")
+	exclude = strings.ReplaceAll(exclude, `\*`, ".*")
+	exclude = strings.ReplaceAll(exclude, `\?`, ".?")
 	exclude = "^" + exclude + "$"
 	return regexp.Compile(exclude)
 }
