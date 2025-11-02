@@ -45,11 +45,6 @@ func (u *PackageUploader) Upload() error {
 		return fmt.Errorf("get paths: %s", err)
 	}
 
-	// XXX
-	for _, p := range paths {
-		fmt.Println(p)
-	}
-
 	archivePath, err := u.createArchive(paths)
 	if err != nil {
 		return fmt.Errorf("create archive: %s", err)

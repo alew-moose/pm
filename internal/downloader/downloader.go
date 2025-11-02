@@ -84,11 +84,6 @@ func (d *PackageDownloader) Download() error {
 		return fmt.Errorf("find packages: %s", err)
 	}
 
-	fmt.Println(">>> packages")
-	for _, p := range packages {
-		fmt.Println(p)
-	}
-
 	for _, p := range packages {
 		// TODO: log verbose
 		archivePath, err := d.sftpClient.DownloadPackage(p)
@@ -112,66 +107,44 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 		return nil, fmt.Errorf("get packages: %s", err)
 	}
 
-	// fmt.Printf(">>> files %#v\n", files)
-
 	// TODO: rename all found*
 	found := make(map[PackageVersionSpec]PackageVersion)
 	for _, file := range files {
-		// fmt.Printf(">>> check %s\n", file.Name())
 		pv, err := PackageVersionFromString(file.Name())
 		if err != nil {
 			log.Printf("invalid package name %q: %s, skipping\n", file.Name(), err)
 			continue
 		}
 		for _, pvs := range d.config.Packages {
-			// fmt.Printf("    >>> check %s\n", pvs)
 			if !pvs.Match(pv) {
-				// fmt.Println("      no match")
 				continue
 			}
 			if foundPV, ok := found[pvs]; !ok || pvs.VersionSpec.Version.GreaterThan(foundPV.Version) {
-				// fmt.Println("      add")
 				if err := pv.Validate(); err != nil {
-					fmt.Printf(">>> INVALID PACKAGE\n")
 				}
 				found[pvs] = pv
 			}
 		}
 	}
 
-	fmt.Printf(">>> === found: %#v\n", found)
 	var notFound []PackageVersionSpec
 	foundPackages := make(map[PackageVersion][]PackageVersionSpec, len(found))
 	for _, pvs := range d.config.Packages {
 		if pv, ok := found[pvs]; ok {
-			fmt.Printf(">>> found %s %s\n", pvs, pv)
 			foundPackages[pv] = append(foundPackages[pv], pvs)
 		} else {
-			fmt.Printf(">>> not found %s\n", pvs)
 			notFound = append(notFound, pvs)
 		}
 	}
 
-	fmt.Printf(">>> found packages: %#v\n", foundPackages)
-	fmt.Printf(">>> not found: %#v\n", notFound)
-
 	if len(notFound) > 0 {
-		// TODO: pretty print
-		notFoundStrs := make([]string, 0, len(notFound))
-		for _, pvs := range notFound {
-			notFoundStrs = append(notFoundStrs, pvs.String())
-		}
-		return nil, fmt.Errorf("packages not found: %s", strings.Join(notFoundStrs, ", "))
+		return nil, fmt.Errorf("packages not found: %s", stringersSliceToString(notFound))
 	}
 
 	packages := make([]string, 0, len(foundPackages))
 	for pv, pvss := range foundPackages {
 		if len(pvss) > 1 {
-			pvsStrs := make([]string, 0, len(pvss))
-			for _, pvs := range pvss {
-				pvsStrs = append(pvsStrs, pvs.String())
-			}
-			log.Printf("package %s satisfies several specs (%s), but will be downloaded only once\n", pv, strings.Join(pvsStrs, ", "))
+			log.Printf("package %s satisfies several specs (%s), but will be downloaded only once\n", pv, stringersSliceToString(pvss))
 		}
 		packages = append(packages, pv.String())
 	}
@@ -211,7 +184,6 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 		}
 
 		dir := filepath.Dir(header.Name)
-		log.Printf("create dir %q", dir)
 		// TODO: perm?
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return fmt.Errorf("mkdir: %s", err)
@@ -232,4 +204,12 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 	}
 
 	return nil
+}
+
+func stringersSliceToString[S fmt.Stringer](stringers []S) string {
+	strs := make([]string, 0, len(stringers))
+	for _, stringer := range stringers {
+		strs = append(strs, stringer.String())
+	}
+	return strings.Join(strs, ", ")
 }

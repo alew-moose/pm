@@ -6,6 +6,10 @@
 - [.] TODO:
   - [ ] readme:
     - [ ] packets в файле
+    - [ ] Makefile
+    - [ ] config in HOME
+    - [ ] сравнение версий
+    - [ ] absolute paths?
     - [ ] ...
   - [ ] packageDownloader -> downloader && packageUploader -> uploader ?
   - [X] validate config
