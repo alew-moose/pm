@@ -15,6 +15,7 @@
     - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
     - [ ] working directory
     - [ ] нет возможности рекурсивно добавить файлы (double star)
+    - [ ] неэффективно хранить все пакеты в одной директории. Можно разбивать на поддиректории n-ной глубины или может заюзать sqlite
     - [ ] ...
   - [ ] packageDownloader -> downloader && packageUploader -> uploader ? Или наоборот?
   - [X] validate config
@@ -35,7 +36,7 @@
   - [X] dedup files for uploader
   - [X] pretty printer для слайса стрингеров
   - [ ] разнобой с методами по значению/по указателю
-  - [ ] check tar ErrInsecurePath
+  - [ ] what is tar ErrInsecurePath ?
   - [X] test absolute paths -- absolute paths work
   - [X] test ../../ paths
   - [ ] integration tests
@@ -47,8 +48,7 @@
   - [ ] https://sftptogo.com/blog/go-sftp/ get host key
   - [ ] валидации наслаиваются, кажется по нескольку раз вызываю
   - [ ] %q -> '%s' ?
-  - [ ] неэффективно хранить все пакеты в одной директории
-  - [ ] uploader:
-  - [X] download packets
+  - [X] uploader:
+    - [X] download packets
   - [X] remove "failed to"
   - [ ] выводить статистику после загрузки/выгрузки? (кол-во файлов, общий размер)
