@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -127,7 +126,6 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 
 	createdDirs := make(map[string]struct{})
 	for {
-		// TODO: warn when overwriting files?
 		header, err := tr.Next()
 		if err == io.EOF {
 			break
@@ -141,7 +139,6 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 		}
 
 		dir := filepath.Dir(header.Name)
-		// TODO: perm?
 		if _, ok := createdDirs[dir]; !ok {
 			log.Printf("creating dir %q\n", dir)
 			if err := os.MkdirAll(dir, 0755); err != nil {
@@ -152,7 +149,7 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 
 		log.Printf("extracting file %q\n", header.Name)
 
-		if _, err := os.Stat(header.Name); !errors.Is(err, fs.ErrNotExist) {
+		if _, err := os.Stat(header.Name); !errors.Is(err, os.ErrNotExist) {
 			log.Printf("%q already exists, overwriting\n", header.Name)
 		}
 

@@ -16,7 +16,6 @@ import (
 
 type Config struct {
 	// TODO Name -> PackageName ?
-	// TODO string -> PackageName
 	Name         pkg.PackageName          `json:"name" yaml:"name"`
 	Version      version.Version          `json:"ver" yaml:"ver"`
 	Targets      []Target                 `json:"targets" yaml:"targets"`
@@ -98,7 +97,6 @@ type Target struct {
 }
 
 func (t Target) Validate() error {
-	// TODO: forbid absolute paths?
 	if t.Path == "" {
 		return errors.New("invalid target: empty path")
 	}

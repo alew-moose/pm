@@ -24,6 +24,7 @@
     - [X] uploader
   - [X] regexp replace all -> strings replace all?
   - [X] пакеты должны скачиваться по порядку
+  - [ ] package name: более строгая валидация?
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
   - [X] create path unless exists (in constructor?)
   - [X] проверить, что сохраняются пермишны

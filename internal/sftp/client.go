@@ -49,22 +49,20 @@ func (c *Client) CreatePackagesDirUnlessExists() error {
 	return c.client.MkdirAll(c.config.Path)
 }
 
+// TODO: rename name -> ?
 // TODO: version string->version
 func (c *Client) PackageExists(name string) (bool, error) {
 	path := fmt.Sprintf("%s/%s", c.config.Path, name)
-	fileInfo, err := c.client.Stat(path)
-	if err != nil && err.Error() == "file does not exist" {
+	_, err := c.client.Stat(path)
+	if errors.Is(err, os.ErrNotExist) {
 		return false, nil
 	}
 	if err != nil {
 		return false, fmt.Errorf("stat: %s", err)
 	}
-	// TODO: need to check fileInfo?
-	_ = fileInfo
 	return true, nil
 }
 
-// TODO: rename all name -> packageName ?
 func (c *Client) UploadPackage(packageName string, archivePath string) error {
 	remotePath := c.packagePath(packageName)
 	log.Printf("uploading %q as package %s\n", archivePath, packageName)
@@ -187,5 +185,3 @@ func sshConnect(host, port, user string) (*ssh.Client, error) {
 
 	return client, nil
 }
-
-// TODO: https://sftptogo.com/blog/go-sftp/ get host key

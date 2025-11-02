@@ -71,7 +71,6 @@ func (u *PackageUploader) Upload() error {
 	}
 	defer func() {
 		err := os.Remove(archivePath)
-		// TODO: Remove error check ?
 		if err != nil {
 			log.Printf("remove %q: %s\n", archivePath, err)
 		}
@@ -102,7 +101,6 @@ func (u *PackageUploader) getPaths() ([]string, error) {
 		}
 		for _, file := range files {
 			if _, ok := seen[file]; ok {
-				// TODO: verbose
 				log.Printf("duplicate file %q, skipping\n", file)
 				continue
 			}
