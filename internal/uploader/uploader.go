@@ -10,14 +10,18 @@ import (
 	"path/filepath"
 	"regexp"
 
+	"github.com/alew-moose/pm/internal/downloader"
 	"github.com/alew-moose/pm/internal/sftp"
 )
 
 type PackageUploader struct {
 	config     *Config
 	sftpClient *sftp.Client
+	// TODO: rename?
+	downloader *downloader.PackageDownloader
 }
 
+// TODO: rename?
 func New(config *Config, sftpClient *sftp.Client) (*PackageUploader, error) {
 	if err := config.Validate(); err != nil {
 		return nil, fmt.Errorf("invalid config: %s", err)
@@ -26,11 +30,20 @@ func New(config *Config, sftpClient *sftp.Client) (*PackageUploader, error) {
 		config:     config,
 		sftpClient: sftpClient,
 	}
+	if len(config.Dependencies) > 0 {
+		downloaderConfig := &downloader.Config{
+			Packages: config.Dependencies,
+		}
+		pd, err := downloader.New(downloaderConfig, sftpClient)
+		if err != nil {
+			return nil, fmt.Errorf("create new downloader: %s", err)
+		}
+		pu.downloader = pd
+	}
 	return pu, nil
 }
 
 func (u *PackageUploader) Upload() error {
-	// TODO: create dir unless exists
 	packageName := u.config.FileName()
 	packageExists, err := u.sftpClient.PackageExists(packageName)
 	if err != nil {
@@ -38,6 +51,10 @@ func (u *PackageUploader) Upload() error {
 	}
 	if packageExists {
 		return fmt.Errorf("package %s already exists", packageName)
+	}
+
+	if err := u.downloader.Download(); err != nil {
+		return fmt.Errorf("download dependencies: %s", err)
 	}
 
 	paths, err := u.getPaths()

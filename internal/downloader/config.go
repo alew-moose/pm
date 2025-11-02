@@ -80,6 +80,8 @@ func ConfigFromFile(path string) (*Config, error) {
 		return nil, fmt.Errorf("%q format is not supported", ext)
 	}
 
+	FillDefaultVersionSpecs(config.Packages)
+
 	return config, nil
 }
 
@@ -88,7 +90,6 @@ func fromJSON(b []byte) (*Config, error) {
 	if err := json.Unmarshal(b, &config); err != nil {
 		return nil, err
 	}
-	fillDefaultVersionSpecs(&config)
 	return &config, nil
 }
 
@@ -97,7 +98,6 @@ func fromYAML(b []byte) (*Config, error) {
 	if err := yaml.Unmarshal(b, &config); err != nil {
 		return nil, err
 	}
-	fillDefaultVersionSpecs(&config)
 	return &config, nil
 }
 
@@ -110,9 +110,9 @@ var defaultVersionSpec = version.VersionSpec{
 	Comparison: version.ComparisonGreaterOrEqual,
 }
 
-func fillDefaultVersionSpecs(config *Config) {
-	for i := range config.Packages {
-		p := &config.Packages[i]
+func FillDefaultVersionSpecs(packages []PackageVersionSpec) {
+	for i := range packages {
+		p := &packages[i]
 		if p.VersionSpec == emptyVersionSpec {
 			p.VersionSpec = defaultVersionSpec
 		}

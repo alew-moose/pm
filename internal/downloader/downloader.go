@@ -67,6 +67,7 @@ func PackageVersionFromString(s string) (PackageVersion, error) {
 	return packageVersion, nil
 }
 
+// TODO: rename?
 func New(config *Config, sftpClient *sftp.Client) (*PackageDownloader, error) {
 	if err := config.Validate(); err != nil {
 		return nil, fmt.Errorf("invalid config: %s", err)
@@ -142,7 +143,7 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 	packages := make([]string, 0, len(foundPackages))
 	for pv, pvss := range foundPackages {
 		if len(pvss) > 1 {
-			log.Printf("package %s satisfies several specs (%s), but will be downloaded only once\n", pv, stringersSliceToString(pvss))
+			log.Printf("package %s satisfies several specs (%s), but will be downloaded and extracted only once\n", pv, stringersSliceToString(pvss))
 		}
 		packages = append(packages, pv.String())
 	}

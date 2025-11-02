@@ -10,14 +10,18 @@
     - [ ] config in HOME
     - [ ] сравнение версий
     - [ ] absolute paths?
+    - [ ] нет возможности рекурсивно добавить файлы (double star)
     - [ ] ...
   - [ ] packageDownloader -> downloader && packageUploader -> uploader ?
   - [X] validate config
   - [ ] regexp replace all -> strings replace all?
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
   - [ ] create path unless exists (in constructor?)
+  - [ ] проверить, что сохраняются пермишны
+  - [ ] print working directory?
   - [ ] move package version & package version spec to pkg? + tests ?
   - [ ] name -> type PackageName + validation + move to pkg?
+  - [ ] recursive (double star)
   - [X] что означает "packets" в файле для упаковки packet.json?
   - [ ] tests for uploader/downloader configs from json/yaml
   - [X] dedup files for uploader

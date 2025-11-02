@@ -52,6 +52,7 @@ func ConfigFromFile(path string) (*Config, error) {
 		return nil, fmt.Errorf("%q format is not supported", ext)
 	}
 
+	downloader.FillDefaultVersionSpecs(config.Dependencies)
 	return config, nil
 }
 
