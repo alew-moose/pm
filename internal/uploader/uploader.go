@@ -91,7 +91,7 @@ func (u *PackageUploader) getPaths() ([]string, error) {
 		log.Printf("find files for target %q excluding %q\n", target.Path, target.Exclude)
 		files, err := filepath.Glob(target.Path)
 		for _, file := range files {
-			log.Printf("found file %s\n", file)
+			log.Printf("found file %q\n", file)
 		}
 		if err != nil {
 			return nil, fmt.Errorf("glob %q: %s", target.Path, err)
@@ -124,7 +124,7 @@ func filterPaths(paths []string, exclude string) ([]string, error) {
 	}
 	for _, path := range paths {
 		if excludeRe.MatchString(path) {
-			log.Printf("excluded %s by /%s/\n", path, excludeRe)
+			log.Printf("excluded %q by %q\n", path, excludeRe)
 		} else {
 			filtered = append(filtered, path)
 		}
@@ -146,7 +146,7 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("create temp file: %s", err)
 	}
-	log.Printf("created archive %s\n", f.Name())
+	log.Printf("created archive %q\n", f.Name())
 	defer func() {
 		_ = f.Close()
 	}()
@@ -161,7 +161,7 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 	}()
 
 	for _, path := range paths {
-		log.Printf("adding file %s\n", path)
+		log.Printf("adding file %q\n", path)
 		if err := u.addFile(tw, path); err != nil {
 			return "", fmt.Errorf("upload %q: %s", path, err)
 		}

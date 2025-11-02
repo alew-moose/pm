@@ -143,17 +143,17 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 		dir := filepath.Dir(header.Name)
 		// TODO: perm?
 		if _, ok := createdDirs[dir]; !ok {
-			log.Printf("creating dir %s\n", dir)
+			log.Printf("creating dir %q\n", dir)
 			if err := os.MkdirAll(dir, 0755); err != nil {
 				return fmt.Errorf("mkdir: %s", err)
 			}
 			createdDirs[dir] = struct{}{}
 		}
 
-		log.Printf("extracting file %s\n", header.Name)
+		log.Printf("extracting file %q\n", header.Name)
 
 		if _, err := os.Stat(header.Name); !errors.Is(err, fs.ErrNotExist) {
-			log.Printf("%s already exists, overwriting\n", header.Name)
+			log.Printf("%q already exists, overwriting\n", header.Name)
 		}
 
 		f, err := os.OpenFile(header.Name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, header.FileInfo().Mode())

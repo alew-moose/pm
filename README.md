@@ -29,7 +29,7 @@
   - [X] проверить, что сохраняются пермишны
   - [X] overwrite warnings?
   - [ ] move package version & package version spec to pkg? + tests ?
-  - [ ] name -> type PackageName + validation + move to pkg?
+  - [X] name -> type PackageName + validation + move to pkg?
   - [ ] recursive (double star)
   - [X] что означает "packets" в файле для упаковки packet.json?
   - [ ] tests for uploader/downloader configs from json/yaml
@@ -45,10 +45,11 @@
   - [X] sftpClient refactor : remotePath method
   - [ ] сделать архиватор отдельно (упаковка, распаковка)
   - [ ] enable more linters? https://golangci-lint.run/docs/linters/configuration/
-  - [ ] там, где var smth, var error: может, сделать именованные возвращаемые?
+  - [X] там, где var smth, var error: может, сделать именованные возвращаемые? -- нет
   - [ ] https://sftptogo.com/blog/go-sftp/ get host key
   - [ ] валидации наслаиваются, кажется по нескольку раз вызываю
-  - [ ] %q -> '%s' ?
+  - [X] %q -> '%s' ? -- да вроде норм
+  - [X] %s -> %q ?
   - [X] uploader:
     - [X] download packets
   - [X] remove "failed to"

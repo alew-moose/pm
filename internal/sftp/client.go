@@ -67,7 +67,7 @@ func (c *Client) PackageExists(name string) (bool, error) {
 // TODO: rename all name -> packageName ?
 func (c *Client) UploadPackage(packageName string, archivePath string) error {
 	remotePath := c.packagePath(packageName)
-	log.Printf("uploading %s as package %s\n", archivePath, packageName)
+	log.Printf("uploading %q as package %s\n", archivePath, packageName)
 
 	srcFile, err := os.Open(archivePath)
 	if err != nil {
@@ -119,7 +119,7 @@ func (c *Client) DownloadPackage(packageName string) (string, error) {
 		_ = dstFile.Close()
 	}()
 
-	log.Printf("downloading package %s to %s\n", packageName, dstFile.Name())
+	log.Printf("downloading package %s to %q\n", packageName, dstFile.Name())
 
 	bytes, err := io.Copy(dstFile, srcFile)
 	if err != nil {
