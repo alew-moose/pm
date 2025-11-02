@@ -1,7 +1,5 @@
 /pm
-packet.json
-packet.yaml
-packages.json
-packages.yaml
+*.json
+*.yaml
 print_yaml.pl
 archive_this*

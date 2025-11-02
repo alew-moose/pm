@@ -24,18 +24,17 @@
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
   - [X] create path unless exists (in constructor?)
   - [ ] проверить, что сохраняются пермишны
-  - [ ] print working directory?
   - [ ] move package version & package version spec to pkg? + tests ?
   - [ ] name -> type PackageName + validation + move to pkg?
   - [ ] recursive (double star)
   - [X] что означает "packets" в файле для упаковки packet.json?
   - [ ] tests for uploader/downloader configs from json/yaml
   - [X] dedup files for uploader
-  - [ ] pretty printer для слайса стрингеров
+  - [X] pretty printer для слайса стрингеров
   - [ ] разнобой с методами по значению/по указателю
   - [ ] check tar ErrInsecurePath
-  - [ ] test absolute paths
-  - [ ] check filepath.IsAbs
+  - [X] test absolute paths -- absolute paths work
+  - [X] test ../../ paths
   - [ ] integration tests
   - [ ] shorten packageVersion -> pv & packageVersionSpec -> pvs ?
   - [ ] sftpClient refactor : remotePath method

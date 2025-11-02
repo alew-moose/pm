@@ -79,7 +79,7 @@ func NewPackageDownloader(config *Config, sftpClient *sftp.Client) (*PackageDown
 }
 
 func (d *PackageDownloader) Download() error {
-	log.Printf("download packages: %s", stringersSliceToString(d.config.Packages))
+	log.Printf("download packages: %s\n", stringersSliceToString(d.config.Packages))
 	packages, err := d.findPackages()
 	if err != nil {
 		return fmt.Errorf("find packages: %s", err)
@@ -170,6 +170,7 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 	}()
 	tr := tar.NewReader(gzr)
 
+	createdDirs := make(map[string]struct{})
 	for {
 		// TODO: warn when overwriting files?
 		header, err := tr.Next()
@@ -177,7 +178,8 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 			break
 		}
 		if err == tar.ErrInsecurePath {
-			log.Printf("insecure path: %q, skipping", header.Name)
+			log.Printf("insecure path: %q, skipping\n", header.Name)
+			continue
 		}
 		if err != nil {
 			return fmt.Errorf("tar: %s", err)
@@ -185,10 +187,15 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 
 		dir := filepath.Dir(header.Name)
 		// TODO: perm?
-		if err := os.MkdirAll(dir, 0755); err != nil {
-			return fmt.Errorf("mkdir: %s", err)
+		if _, ok := createdDirs[dir]; !ok {
+			log.Printf("creating dir %s\n", dir)
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				return fmt.Errorf("mkdir: %s", err)
+			}
+			createdDirs[dir] = struct{}{}
 		}
 
+		log.Printf("extracting file %s\n", header.Name)
 		f, err := os.OpenFile(header.Name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, header.FileInfo().Mode())
 		if err != nil {
 			return err
