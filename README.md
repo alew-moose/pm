@@ -8,6 +8,7 @@
     - [ ] моя интерпретация packets в файле
     - [ ] Makefile
     - [ ] config in HOME
+    - [ ] always verbose
     - [ ] сравнение версий
     - [ ] absolute paths?
     - [ ] exclude re
@@ -21,6 +22,7 @@
     - [X] downloader
     - [X] uploader
   - [X] regexp replace all -> strings replace all?
+  - [ ] пакеты должны скачиваться по порядку
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
   - [X] create path unless exists (in constructor?)
   - [ ] проверить, что сохраняются пермишны

@@ -37,6 +37,11 @@ func NewClient(config *Config) (*Client, error) {
 	if err := client.CreatePackagesDirUnlessExists(); err != nil {
 		return nil, fmt.Errorf("create packages dir: %s", err)
 	}
+	packagesDir, err := client.PackagesDir()
+	if err != nil {
+		return nil, fmt.Errorf("get packages dir: %s", err)
+	}
+	log.Printf("packages dir: %s\n", packagesDir)
 	return client, nil
 }
 
@@ -131,6 +136,14 @@ func (c *Client) DownloadPackage(packageName string) (string, error) {
 
 func (c *Client) packagePath(packageName string) string {
 	return fmt.Sprintf("%s/%s", c.config.Path, packageName)
+}
+
+func (c *Client) PackagesDir() (string, error) {
+	workingDir, err := c.client.Getwd()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s/%s", workingDir, c.config.Path), nil
 }
 
 func (c *Client) GetPackages() ([]os.FileInfo, error) {
