@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -23,48 +24,63 @@ func main() {
 		os.Exit(1)
 	}
 
-	home := os.Getenv("HOME")
-	if home == "" {
-		log.Fatal("HOME is empty")
-	}
-	configFile := fmt.Sprintf("%s/.pm.json", home)
-
-	sftpConfig, err := sftp.ConfigFromFile(configFile)
-	if err != nil {
-		log.Fatalf("failed to load config: %s", err)
-	}
-
-	sftpClient, err := sftp.NewClient(sftpConfig)
+	sftpClient, err := newSftpClient()
 	if err != nil {
 		log.Fatalf("new sftp client: %s", err)
 	}
 
 	switch cmd {
 	case "create":
-		upload(sftpClient, cmdConfigFile)
+		if err := upload(sftpClient, cmdConfigFile); err != nil {
+			log.Fatalf("failed to upload: %s", err)
+		}
 	case "update":
-		download(sftpClient, cmdConfigFile)
+		if err := download(sftpClient, cmdConfigFile); err != nil {
+			log.Fatalf("failed to download: %s", err)
+		}
 	}
-
 }
 
-func upload(sftpClient *sftp.Client, cmdConfigFile string) {
+func newSftpClient() (*sftp.Client, error) {
+	home := os.Getenv("HOME")
+	if home == "" {
+		return nil, errors.New("HOME is empty")
+	}
+	configFile := fmt.Sprintf("%s/.pm.json", home)
+
+	sftpConfig, err := sftp.ConfigFromFile(configFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load config: %s", err)
+	}
+
+	sftpClient, err := sftp.NewClient(sftpConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return sftpClient, nil
+}
+
+func upload(sftpClient *sftp.Client, cmdConfigFile string) error {
 	uploaderConfig, err := uploader.ConfigFromFile(cmdConfigFile)
 	if err != nil {
-		log.Fatalf("failed to parse uploader config: %s", err)
+		return fmt.Errorf("failed to parse uploader config: %s", err)
 	}
 
 	uploader, err := uploader.New(uploaderConfig, sftpClient)
 	if err != nil {
-		log.Fatalf("failed to create new uploader: %s", err)
+		return fmt.Errorf("failed to create new uploader: %s", err)
 	}
 
 	if err := uploader.Upload(); err != nil {
-		log.Fatalf("failed to upload: %s", err)
+		return fmt.Errorf("failed to upload: %s", err)
 	}
+
+	return nil
 }
 
-func download(sftpClient *sftp.Client, configFile string) {
+func download(sftpClient *sftp.Client, configFile string) error {
+	return nil
 }
 
 func printUsage() {
