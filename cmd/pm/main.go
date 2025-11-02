@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -13,20 +12,23 @@ import (
 func main() {
 	log.SetFlags(0)
 
-	configFile, cmd, cmdConfigFile := parseArgs()
-
-	sftpClient := newSftpClient(configFile)
-
-	switch cmd {
-	case "create":
-		upload(sftpClient, cmdConfigFile)
-	case "update":
-		download(sftpClient, cmdConfigFile)
+	if len(os.Args) != 3 {
+		printUsage()
+		os.Exit(1)
 	}
 
-}
+	cmd, cmdConfigFile := os.Args[1], os.Args[2]
+	if cmd != "create" && cmd != "update" {
+		printUsage()
+		os.Exit(1)
+	}
 
-func newSftpClient(configFile string) *sftp.Client {
+	home := os.Getenv("HOME")
+	if home == "" {
+		log.Fatal("HOME is empty")
+	}
+	configFile := fmt.Sprintf("%s/.pm.json", home)
+
 	sftpConfig, err := sftp.ConfigFromFile(configFile)
 	if err != nil {
 		log.Fatalf("failed to load config: %s", err)
@@ -37,7 +39,13 @@ func newSftpClient(configFile string) *sftp.Client {
 		log.Fatalf("new sftp client: %s", err)
 	}
 
-	return sftpClient
+	switch cmd {
+	case "create":
+		upload(sftpClient, cmdConfigFile)
+	case "update":
+		download(sftpClient, cmdConfigFile)
+	}
+
 }
 
 func upload(sftpClient *sftp.Client, cmdConfigFile string) {
@@ -59,33 +67,11 @@ func upload(sftpClient *sftp.Client, cmdConfigFile string) {
 func download(sftpClient *sftp.Client, configFile string) {
 }
 
-func parseArgs() (string, string, string) {
-	defaultConfigFile := fmt.Sprintf("%s/.pm.json", os.Getenv("HOME"))
-
-	var configFile string
-	flag.StringVar(&configFile, "f", defaultConfigFile, "config file")
-
-	flag.Parse()
-
-	args := flag.Args()
-	if len(args) != 2 {
-		printUsage()
-		os.Exit(1)
-	}
-
-	if args[0] != "create" && args[0] != "update" {
-		printUsage()
-		os.Exit(1)
-	}
-
-	return configFile, args[0], args[1]
-}
-
 func printUsage() {
 	usageStr := fmt.Sprintf(
 		"Usage:\n"+
-			"  %[1]s [-f <config-file>] create <create-config-file>\n"+
-			"  %[1]s [-f <config-file>] update <update-config-file>\n",
+			"  %[1]s create <create-config-file>\n"+
+			"  %[1]s update <update-config-file>\n",
 		os.Args[0],
 	)
 	fmt.Fprintf(os.Stderr, usageStr)

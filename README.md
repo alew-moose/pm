@@ -5,6 +5,7 @@
 
 - [ ] TODO:
   - [ ] validate config
+  - [ ] regexp replace all -> strings replace all?
   - [ ] create path?
   - [ ] что означает "packets" в файле для упаковки packet.json?
   - [ ] version поменьше взять uint?
