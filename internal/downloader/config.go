@@ -3,6 +3,7 @@ package downloader
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -114,6 +115,7 @@ func FillDefaultVersionSpecs(packages []PackageVersionSpec) {
 	for i := range packages {
 		p := &packages[i]
 		if p.VersionSpec == emptyVersionSpec {
+			log.Printf("using default version spec %s for package %s\n", defaultVersionSpec, p.Name)
 			p.VersionSpec = defaultVersionSpec
 		}
 	}

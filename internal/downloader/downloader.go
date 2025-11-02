@@ -128,8 +128,12 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 
 	var notFound []PackageVersionSpec
 	foundPackages := make(map[PackageVersion][]PackageVersionSpec, len(found))
+	packages := make([]string, 0, len(foundPackages))
 	for _, pvs := range d.config.Packages {
 		if pv, ok := found[pvs]; ok {
+			if len(foundPackages[pv]) == 0 {
+				packages = append(packages, pv.String())
+			}
 			foundPackages[pv] = append(foundPackages[pv], pvs)
 		} else {
 			notFound = append(notFound, pvs)
@@ -140,15 +144,12 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 		return nil, fmt.Errorf("packages not found: %s", stringersSliceToString(notFound))
 	}
 
-	packages := make([]string, 0, len(foundPackages))
 	for pv, pvss := range foundPackages {
 		if len(pvss) > 1 {
 			log.Printf("package %s satisfies several specs (%s), but will be downloaded and extracted only once\n", pv, stringersSliceToString(pvss))
 		}
-		packages = append(packages, pv.String())
 	}
 
-	// TODO: надо чтобы packages были отсортированы как в конфиге
 	return packages, nil
 }
 
