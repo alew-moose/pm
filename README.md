@@ -28,7 +28,7 @@
   - [X] create path unless exists (in constructor?)
   - [X] проверить, что сохраняются пермишны
   - [X] overwrite warnings?
-  - [ ] move package version & package version spec to pkg? + tests ?
+  - [X] move package version & package version spec to pkg? + tests ?
   - [X] name -> type PackageName + validation + move to pkg?
   - [ ] recursive (double star)
   - [X] что означает "packets" в файле для упаковки packet.json?

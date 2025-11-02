@@ -160,10 +160,17 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 		if err != nil {
 			return err
 		}
+		defer func() {
+			_ = f.Close()
+		}()
 
 		bytes, err := io.Copy(f, tr)
 		if err != nil {
 			return fmt.Errorf("copy: %s", err)
+		}
+
+		if err := f.Close(); err != nil {
+			return fmt.Errorf("close file: %s", err)
 		}
 
 		// TODO log verbose

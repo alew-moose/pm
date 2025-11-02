@@ -93,7 +93,12 @@ func (c *Client) UploadPackage(packageName string, archivePath string) error {
 	// TODO: log verbose
 	_ = bytes
 
-	// TODO: check close files?
+	if err := srcFile.Close(); err != nil {
+		return fmt.Errorf("close %q: %s", srcFile.Name(), err)
+	}
+	if err := dstFile.Close(); err != nil {
+		return fmt.Errorf("close %q: %s", dstFile.Name(), err)
+	}
 
 	return nil
 }
@@ -109,7 +114,6 @@ func (c *Client) DownloadPackage(packageName string) (string, error) {
 		_ = srcFile.Close()
 	}()
 
-	// TODO: move out of here
 	tmpFilePattern := fmt.Sprintf("%s-*.tar.gz", packageName)
 	dstFile, err := os.CreateTemp("", tmpFilePattern)
 	if err != nil {
@@ -129,7 +133,12 @@ func (c *Client) DownloadPackage(packageName string) (string, error) {
 	// TODO: log verbose
 	_ = bytes
 
-	// TODO: check close files?
+	if err := srcFile.Close(); err != nil {
+		return "", fmt.Errorf("close %q: %s", srcFile.Name(), err)
+	}
+	if err := dstFile.Close(); err != nil {
+		return "", fmt.Errorf("close %q: %s", dstFile.Name(), err)
+	}
 
 	return dstFile.Name(), nil
 }

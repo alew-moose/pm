@@ -202,7 +202,7 @@ func (u *PackageUploader) addFile(tw *tar.Writer, path string) error {
 
 	err = tw.WriteHeader(header)
 	if err != nil {
-		return fmt.Errorf("writer header: %s", err)
+		return fmt.Errorf("write header: %s", err)
 	}
 
 	_, err = io.Copy(tw, file)
