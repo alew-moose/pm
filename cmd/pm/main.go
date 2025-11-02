@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/alew-moose/pm/internal/downloader"
 	"github.com/alew-moose/pm/internal/sftp"
 	"github.com/alew-moose/pm/internal/uploader"
 )
@@ -50,7 +51,7 @@ func newSftpClient() (*sftp.Client, error) {
 
 	sftpConfig, err := sftp.ConfigFromFile(configFile)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load config: %s", err)
+		return nil, fmt.Errorf("load config: %s", err)
 	}
 
 	sftpClient, err := sftp.NewClient(sftpConfig)
@@ -62,33 +63,49 @@ func newSftpClient() (*sftp.Client, error) {
 }
 
 func upload(sftpClient *sftp.Client, cmdConfigFile string) error {
-	uploaderConfig, err := uploader.ConfigFromFile(cmdConfigFile)
+	config, err := uploader.ConfigFromFile(cmdConfigFile)
 	if err != nil {
-		return fmt.Errorf("failed to parse uploader config: %s", err)
+		return fmt.Errorf("parse uploader config: %s", err)
 	}
 
-	uploader, err := uploader.New(uploaderConfig, sftpClient)
+	uploader, err := uploader.New(config, sftpClient)
 	if err != nil {
-		return fmt.Errorf("failed to create new uploader: %s", err)
+		return fmt.Errorf("create new uploader: %s", err)
 	}
 
 	if err := uploader.Upload(); err != nil {
-		return fmt.Errorf("failed to upload: %s", err)
+		return fmt.Errorf("upload: %s", err)
 	}
 
 	return nil
 }
 
-func download(sftpClient *sftp.Client, configFile string) error {
+func download(sftpClient *sftp.Client, cmdConfigFile string) error {
+	config, err := downloader.ConfigFromFile(cmdConfigFile)
+	if err != nil {
+		return fmt.Errorf("parse downloader config: %s", err)
+	}
+
+	fmt.Printf("config: %#v\n", config)
+
+	// downloader, err := downloader.New(config, sftpClient)
+	// if err != nil {
+	// 	return fmt.Errorf("create new downloader: %s", err)
+	// }
+
+	// if err := downloader.Download(); err != nil {
+	// 	return fmt.Errorf("download: %s", err)
+	// }
+
 	return nil
 }
 
 func printUsage() {
 	usageStr := fmt.Sprintf(
 		"Usage:\n"+
-			"  %[1]s create <create-config-file>\n"+
-			"  %[1]s update <update-config-file>\n",
+			"\t%[1]s create <create-config-file>\n"+
+			"\t%[1]s update <update-config-file>\n",
 		os.Args[0],
 	)
-	fmt.Fprintf(os.Stderr, usageStr)
+	fmt.Fprintln(os.Stderr, usageStr)
 }

@@ -51,8 +51,8 @@ func (u *PackageUploader) Upload() error {
 	// XXX log verbose
 	log.Printf("archive: %s\n", archivePath)
 
-	if err := u.uploadArchive(archivePath); err != nil {
-		return fmt.Errorf("upload archive: %s", err)
+	if err := u.sftpClient.UploadPackage(u.config.FileName(), archivePath); err != nil {
+		return fmt.Errorf("sftp client upload package: %s", err)
 	}
 
 	return nil
@@ -110,9 +110,13 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 	}
 
 	gzw := gzip.NewWriter(f)
-	defer gzw.Close()
+	defer func() {
+		_ = gzw.Close()
+	}()
 	tw := tar.NewWriter(gzw)
-	defer tw.Close()
+	defer func() {
+		_ = tw.Close()
+	}()
 
 	for _, path := range paths {
 		if err := u.addFile(tw, path); err != nil {
@@ -135,7 +139,9 @@ func (u *PackageUploader) addFile(tw *tar.Writer, path string) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	fileInfo, err := file.Stat()
 	if err != nil {
@@ -162,12 +168,5 @@ func (u *PackageUploader) addFile(tw *tar.Writer, path string) error {
 		return fmt.Errorf("close %q: %s", file.Name(), err)
 	}
 
-	return nil
-}
-
-func (u *PackageUploader) uploadArchive(path string) error {
-	if err := u.sftpClient.UploadPackage(u.config.FileName(), path); err != nil {
-		return fmt.Errorf("sftp client upload package: %s", err)
-	}
 	return nil
 }

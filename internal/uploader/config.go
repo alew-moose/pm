@@ -7,16 +7,16 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strconv"
-	"strings"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/alew-moose/pm/internal/version"
 )
 
 type Config struct {
-	Name    string         `json:"name" yaml:"name"`
-	Version PackageVersion `json:"ver" yaml:"ver"`
-	Targets []Target       `json:"targets" yaml:"targets"`
+	Name    string          `json:"name" yaml:"name"`
+	Version version.Version `json:"ver" yaml:"ver"`
+	Targets []Target        `json:"targets" yaml:"targets"`
 }
 
 // TODO: rename (package name?)
@@ -73,8 +73,8 @@ func (c *Config) Validate() error {
 	if !packageNameRe.MatchString(c.Name) {
 		return fmt.Errorf("invalid package name %q", c.Name)
 	}
-	if c.Version.Major == 0 && c.Version.Minor == 0 {
-		return fmt.Errorf("invalid version %d.%d", c.Version.Major, c.Version.Minor)
+	if err := c.Version.Validate(); err != nil {
+		return err
 	}
 	for _, target := range c.Targets {
 		// TODO: forbid absolute paths?
@@ -83,62 +83,6 @@ func (c *Config) Validate() error {
 		}
 	}
 	return nil
-}
-
-type PackageVersion struct {
-	Major uint64
-	Minor uint64
-}
-
-func (v *PackageVersion) UnmarshalJSON(b []byte) error {
-	var verStr string
-	if err := json.Unmarshal(b, &verStr); err != nil {
-		return fmt.Errorf("failed to parse version from %q: %s", b, err)
-	}
-
-	parts := strings.SplitN(verStr, ".", 2)
-	if len(parts) != 2 {
-		return fmt.Errorf("invalid version %q", verStr)
-	}
-
-	verMajor, err := strconv.ParseUint(parts[0], 10, 64)
-	if err != nil {
-		return fmt.Errorf("invalid major version %q", parts[0])
-	}
-	verMinor, err := strconv.ParseUint(parts[1], 10, 64)
-	if err != nil {
-		return fmt.Errorf("invalid minor version %q", parts[1])
-	}
-
-	v.Major = verMajor
-	v.Minor = verMinor
-
-	return nil
-}
-
-func (v *PackageVersion) UnmarshalYAML(value *yaml.Node) error {
-	parts := strings.SplitN(value.Value, ".", 2)
-	if len(parts) != 2 {
-		return fmt.Errorf("invalid version %q", value.Value)
-	}
-
-	verMajor, err := strconv.ParseUint(parts[0], 10, 64)
-	if err != nil {
-		return fmt.Errorf("invalid major version %q", parts[0])
-	}
-	verMinor, err := strconv.ParseUint(parts[1], 10, 64)
-	if err != nil {
-		return fmt.Errorf("invalid minor version %q", parts[1])
-	}
-
-	v.Major = verMajor
-	v.Minor = verMinor
-
-	return nil
-}
-
-func (v PackageVersion) String() string {
-	return fmt.Sprintf("%d.%d", v.Major, v.Minor)
 }
 
 type Target struct {

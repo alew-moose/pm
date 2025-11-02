@@ -1,4 +1,4 @@
-.PHONY: run build
+.PHONY: run build test lint
 
 run:
 	make build
@@ -6,3 +6,9 @@ run:
 
 build:
 	go build -o pm ./cmd/pm
+
+test:
+	go test -v ./...
+
+lint:
+	golangci-lint run

@@ -6,12 +6,10 @@
 - [.] TODO:
   - [X] validate config
   - [ ] regexp replace all -> strings replace all?
-  - [ ] create path?
+  - [ ] create path unless exists
   - [X] что означает "packets" в файле для упаковки packet.json?
+  - [ ] %q -> '%s' ?
   - [ ] uploader:
     - [ ] download packets
-  - [ ] version поменьше взять uint?
   - [ ] remove "failed to"
-  - [ ] в Exclude * считается за .*
-  - [ ] verbose
   - [ ] выводить статистику после загрузки/выгрузки? (кол-во файлов, общий размер)

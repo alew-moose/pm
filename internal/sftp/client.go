@@ -60,13 +60,17 @@ func (c *Client) UploadPackage(packageName string, archivePath string) error {
 	if err != nil {
 		return err
 	}
-	defer srcFile.Close()
+	defer func() {
+		_ = srcFile.Close()
+	}()
 
 	dstFile, err := c.client.OpenFile(remotePath, (os.O_WRONLY | os.O_CREATE | os.O_TRUNC))
 	if err != nil {
 		return fmt.Errorf("open remote file: %s", err)
 	}
-	defer dstFile.Close()
+	defer func() {
+		_ = dstFile.Close()
+	}()
 
 	bytes, err := io.Copy(dstFile, srcFile)
 	if err != nil {
