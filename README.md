@@ -25,7 +25,8 @@
   - [X] пакеты должны скачиваться по порядку
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
   - [X] create path unless exists (in constructor?)
-  - [ ] проверить, что сохраняются пермишны
+  - [X] проверить, что сохраняются пермишны
+  - [X] overwrite warnings?
   - [ ] move package version & package version spec to pkg? + tests ?
   - [ ] name -> type PackageName + validation + move to pkg?
   - [ ] recursive (double star)

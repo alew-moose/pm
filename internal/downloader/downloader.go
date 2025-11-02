@@ -3,8 +3,10 @@ package downloader
 import (
 	"archive/tar"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -197,6 +199,11 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 		}
 
 		log.Printf("extracting file %s\n", header.Name)
+
+		if _, err := os.Stat(header.Name); !errors.Is(err, fs.ErrNotExist) {
+			log.Printf("%s already exists, overwriting\n", header.Name)
+		}
+
 		f, err := os.OpenFile(header.Name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, header.FileInfo().Mode())
 		if err != nil {
 			return err
