@@ -10,14 +10,17 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"github.com/alew-moose/pm/internal/downloader"
 	"github.com/alew-moose/pm/internal/version"
 )
 
 type Config struct {
 	// TODO Name -> PackageName ?
-	Name    string          `json:"name" yaml:"name"`
-	Version version.Version `json:"ver" yaml:"ver"`
-	Targets []Target        `json:"targets" yaml:"targets"`
+	// TODO string -> PackageName
+	Name         string                          `json:"name" yaml:"name"`
+	Version      version.Version                 `json:"ver" yaml:"ver"`
+	Targets      []Target                        `json:"targets" yaml:"targets"`
+	Dependencies []downloader.PackageVersionSpec `json:"packets" yaml:"packets"`
 }
 
 // TODO: rename (package name?)
@@ -78,9 +81,13 @@ func (c *Config) Validate() error {
 		return err
 	}
 	for _, target := range c.Targets {
-		// TODO: forbid absolute paths?
-		if target.Path == "" {
-			return errors.New("invalid target: empty path")
+		if err := target.Validate(); err != nil {
+			return err
+		}
+	}
+	for _, dep := range c.Dependencies {
+		if err := dep.Validate(); err != nil {
+			return fmt.Errorf("invalid dependency: %s", err)
 		}
 	}
 	return nil
@@ -89,6 +96,14 @@ func (c *Config) Validate() error {
 type Target struct {
 	Path    string
 	Exclude string
+}
+
+func (t Target) Validate() error {
+	// TODO: forbid absolute paths?
+	if t.Path == "" {
+		return errors.New("invalid target: empty path")
+	}
+	return nil
 }
 
 func (t *Target) FromMap(m map[string]any) error {

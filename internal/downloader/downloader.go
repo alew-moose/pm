@@ -120,8 +120,6 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 				continue
 			}
 			if foundPV, ok := found[pvs]; !ok || pvs.VersionSpec.Version.GreaterThan(foundPV.Version) {
-				if err := pv.Validate(); err != nil {
-				}
 				found[pvs] = pv
 			}
 		}

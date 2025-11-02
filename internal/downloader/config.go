@@ -32,18 +32,24 @@ func (pvs PackageVersionSpec) String() string {
 // XXX: copypasted from uploader
 var packageNameRe = regexp.MustCompile(`^[\w-]+$`)
 
+func (pvs PackageVersionSpec) Validate() error {
+	if !packageNameRe.MatchString(pvs.Name) {
+		return fmt.Errorf("invalid package name %q", pvs.Name)
+	}
+	if err := pvs.VersionSpec.Validate(); err != nil {
+		return fmt.Errorf("invalid version spec: %s", err)
+	}
+	return nil
+}
+
 func (c *Config) Validate() error {
 	packages := make(map[PackageVersionSpec]struct{}, len(c.Packages))
 	for _, p := range c.Packages {
-		if !packageNameRe.MatchString(p.Name) {
-			return fmt.Errorf("invalid package name %q", p.Name)
-		}
-		if err := p.VersionSpec.Validate(); err != nil {
-			return fmt.Errorf("invalid version spec %#v: %q", p.VersionSpec, err)
+		if err := p.Validate(); err != nil {
+			return err
 		}
 		if _, ok := packages[p]; ok {
-			// TODO: pretty print
-			return fmt.Errorf("duplicate package %#v", p)
+			return fmt.Errorf("duplicate package %s", p)
 		}
 		packages[p] = struct{}{}
 	}
