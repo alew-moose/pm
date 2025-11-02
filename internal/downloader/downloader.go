@@ -10,63 +10,15 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
+	"github.com/alew-moose/pm/internal/pkg"
 	"github.com/alew-moose/pm/internal/sftp"
-	"github.com/alew-moose/pm/internal/version"
 )
 
 type PackageDownloader struct {
 	config     *Config
 	sftpClient *sftp.Client
-}
-
-// TODO: move from here + tests?
-type PackageVersion struct {
-	Name    string
-	Version version.Version
-}
-
-func (pv PackageVersion) Validate() error {
-	if !packageNameRe.MatchString(pv.Name) {
-		return fmt.Errorf("invalid package name %q", pv.Name)
-	}
-	if err := pv.Version.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-// TODO: remove?
-func (pv PackageVersion) String() string {
-	return fmt.Sprintf("%s-%s", pv.Name, pv.Version)
-}
-
-var packageVersionRe = regexp.MustCompile(`^(.+)-(.+)$`)
-
-// TODO: tests
-func PackageVersionFromString(s string) (PackageVersion, error) {
-	var packageVersion PackageVersion
-	var err error
-
-	matches := packageVersionRe.FindStringSubmatch(s)
-	if len(matches) != 3 {
-		return packageVersion, fmt.Errorf("invalid package version %q", s)
-	}
-
-	packageVersion.Name = matches[1]
-
-	packageVersion.Version, err = version.VersionFromString(matches[2])
-	if err != nil {
-		return packageVersion, fmt.Errorf("invalid version: %q", err)
-	}
-
-	if err := packageVersion.Validate(); err != nil {
-		return packageVersion, fmt.Errorf("invalid package version %q", s)
-	}
-
-	return packageVersion, nil
 }
 
 func NewPackageDownloader(config *Config, sftpClient *sftp.Client) (*PackageDownloader, error) {
@@ -110,9 +62,9 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 	}
 
 	// TODO: rename all found*
-	found := make(map[PackageVersionSpec]PackageVersion)
+	found := make(map[pkg.PackageVersionSpec]pkg.PackageVersion)
 	for _, file := range files {
-		pv, err := PackageVersionFromString(file.Name())
+		pv, err := pkg.PackageVersionFromString(file.Name())
 		if err != nil {
 			log.Printf("invalid package name %q: %s, skipping\n", file.Name(), err)
 			continue
@@ -128,8 +80,8 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 		}
 	}
 
-	var notFound []PackageVersionSpec
-	foundPackages := make(map[PackageVersion][]PackageVersionSpec, len(found))
+	var notFound []pkg.PackageVersionSpec
+	foundPackages := make(map[pkg.PackageVersion][]pkg.PackageVersionSpec, len(found))
 	packages := make([]string, 0, len(foundPackages))
 	for _, pvs := range d.config.Packages {
 		if pv, ok := found[pvs]; ok {

@@ -6,45 +6,18 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 
+	"github.com/alew-moose/pm/internal/pkg"
 	"github.com/alew-moose/pm/internal/version"
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	Packages []PackageVersionSpec `json:"packages" yaml:"packages"`
-}
-
-type PackageVersionSpec struct {
-	Name        string              `json:"name" yaml:"name"`
-	VersionSpec version.VersionSpec `json:"ver" yaml:"ver"`
-}
-
-// красота!
-func (pvs *PackageVersionSpec) Match(pv PackageVersion) bool {
-	return pvs.Name == pv.Name && pvs.VersionSpec.Match(pv.Version)
-}
-
-func (pvs PackageVersionSpec) String() string {
-	return fmt.Sprintf("%s(ver %s)", pvs.Name, pvs.VersionSpec)
-}
-
-// XXX: copypasted from uploader
-var packageNameRe = regexp.MustCompile(`^[\w-]+$`)
-
-func (pvs PackageVersionSpec) Validate() error {
-	if !packageNameRe.MatchString(pvs.Name) {
-		return fmt.Errorf("invalid package name %q", pvs.Name)
-	}
-	if err := pvs.VersionSpec.Validate(); err != nil {
-		return fmt.Errorf("invalid version spec: %s", err)
-	}
-	return nil
+	Packages []pkg.PackageVersionSpec `json:"packages" yaml:"packages"`
 }
 
 func (c *Config) Validate() error {
-	packages := make(map[PackageVersionSpec]struct{}, len(c.Packages))
+	packages := make(map[pkg.PackageVersionSpec]struct{}, len(c.Packages))
 	for _, p := range c.Packages {
 		if err := p.Validate(); err != nil {
 			return err
@@ -111,7 +84,7 @@ var defaultVersionSpec = version.VersionSpec{
 	Comparison: version.ComparisonGreaterOrEqual,
 }
 
-func FillDefaultVersionSpecs(packages []PackageVersionSpec) {
+func FillDefaultVersionSpecs(packages []pkg.PackageVersionSpec) {
 	for i := range packages {
 		p := &packages[i]
 		if p.VersionSpec == emptyVersionSpec {

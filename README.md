@@ -33,6 +33,7 @@
   - [ ] recursive (double star)
   - [X] что означает "packets" в файле для упаковки packet.json?
   - [ ] tests for uploader/downloader configs from json/yaml
+  - [ ] rename from(json|yaml): make exported?
   - [X] dedup files for uploader
   - [X] pretty printer для слайса стрингеров
   - [ ] разнобой с методами по значению/по указателю

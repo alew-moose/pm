@@ -6,21 +6,21 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 
 	"gopkg.in/yaml.v3"
 
 	"github.com/alew-moose/pm/internal/downloader"
+	"github.com/alew-moose/pm/internal/pkg"
 	"github.com/alew-moose/pm/internal/version"
 )
 
 type Config struct {
 	// TODO Name -> PackageName ?
 	// TODO string -> PackageName
-	Name         string                          `json:"name" yaml:"name"`
-	Version      version.Version                 `json:"ver" yaml:"ver"`
-	Targets      []Target                        `json:"targets" yaml:"targets"`
-	Dependencies []downloader.PackageVersionSpec `json:"packets" yaml:"packets"`
+	Name         pkg.PackageName          `json:"name" yaml:"name"`
+	Version      version.Version          `json:"ver" yaml:"ver"`
+	Targets      []Target                 `json:"targets" yaml:"targets"`
+	Dependencies []pkg.PackageVersionSpec `json:"packets" yaml:"packets"`
 }
 
 // TODO: rename (package name?)
@@ -72,11 +72,9 @@ func fromYAML(b []byte) (*Config, error) {
 	return &config, nil
 }
 
-var packageNameRe = regexp.MustCompile(`^[\w-]+$`)
-
 func (c *Config) Validate() error {
-	if !packageNameRe.MatchString(c.Name) {
-		return fmt.Errorf("invalid package name %q", c.Name)
+	if err := c.Name.Validate(); err != nil {
+		return err
 	}
 	if err := c.Version.Validate(); err != nil {
 		return err
