@@ -18,9 +18,40 @@ const (
 	ComparisonGreaterOrEqual
 )
 
+func (c Comparison) String() string {
+	switch c {
+	case ComparisonEqual:
+		return ""
+	case ComparisonLess:
+		return "<"
+	case ComparisonLessOrEqual:
+		return "<="
+	case ComparisonGreater:
+		return ">"
+	case ComparisonGreaterOrEqual:
+		return ">="
+	default:
+		panic(fmt.Sprintf("unknown comparison %d", c))
+	}
+}
+
 type VersionSpec struct {
-	Version    Version
 	Comparison Comparison
+	Version    Version
+}
+
+func (vs VersionSpec) String() string {
+	return fmt.Sprintf("%s%s", vs.Comparison, vs.Version)
+}
+
+func (vs *VersionSpec) Validate() error {
+	if vs.Comparison < ComparisonEqual || vs.Comparison > ComparisonGreaterOrEqual {
+		return fmt.Errorf("invalid comparison %d", vs.Comparison)
+	}
+	if err := vs.Version.Validate(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (vs *VersionSpec) Match(v Version) bool {
@@ -28,61 +59,57 @@ func (vs *VersionSpec) Match(v Version) bool {
 	case ComparisonEqual:
 		return v.Major == vs.Version.Major && v.Minor == vs.Version.Minor
 	case ComparisonLess:
-		if v.Major < vs.Version.Major {
+		switch {
+		case v.Major < vs.Version.Major:
 			return true
-		}
-		if v.Major > vs.Version.Major {
+		case v.Major > vs.Version.Major:
+			return false
+		case v.Minor < vs.Version.Minor:
+			return true
+		case v.Minor > vs.Version.Minor:
+			return false
+		default:
 			return false
 		}
-		if v.Minor < vs.Version.Minor {
-			return true
-		}
-		if v.Minor > vs.Version.Minor {
-			return false
-		}
-		return false
 	case ComparisonLessOrEqual:
-		if v.Major < vs.Version.Major {
+		switch {
+		case v.Major < vs.Version.Major:
+			return true
+		case v.Major > vs.Version.Major:
+			return false
+		case v.Minor < vs.Version.Minor:
+			return true
+		case v.Minor > vs.Version.Minor:
+			return false
+		default:
 			return true
 		}
-		if v.Major > vs.Version.Major {
-			return false
-		}
-		if v.Minor < vs.Version.Minor {
-			return true
-		}
-		if v.Minor > vs.Version.Minor {
-			return false
-		}
-		return true
 	case ComparisonGreater:
-		if v.Major < vs.Version.Major {
+		switch {
+		case v.Major < vs.Version.Major:
+			return false
+		case v.Major > vs.Version.Major:
+			return true
+		case v.Minor < vs.Version.Minor:
+			return false
+		case v.Minor > vs.Version.Minor:
+			return true
+		default:
 			return false
 		}
-		if v.Major > vs.Version.Major {
-			return true
-		}
-		if v.Minor < vs.Version.Minor {
-			return false
-		}
-		if v.Minor > vs.Version.Minor {
-			return true
-		}
-		return false
 	case ComparisonGreaterOrEqual:
-		if v.Major < vs.Version.Major {
+		switch {
+		case v.Major < vs.Version.Major:
 			return false
-		}
-		if v.Major > vs.Version.Major {
+		case v.Major > vs.Version.Major:
+			return true
+		case v.Minor < vs.Version.Minor:
+			return false
+		case v.Minor > vs.Version.Minor:
+			return true
+		default:
 			return true
 		}
-		if v.Minor < vs.Version.Minor {
-			return false
-		}
-		if v.Minor > vs.Version.Minor {
-			return true
-		}
-		return true
 	default:
 		panic(fmt.Sprintf("unknown comparison %d", vs.Comparison))
 	}
@@ -139,6 +166,10 @@ func VersionSpecFromString(s string) (VersionSpec, error) {
 	versionSpec.Version, err = VersionFromString(matches[0])
 	if err != nil {
 		return versionSpec, err
+	}
+
+	if err := versionSpec.Validate(); err != nil {
+		return versionSpec, fmt.Errorf("invalid version spec %q: %s", s, err)
 	}
 
 	return versionSpec, nil

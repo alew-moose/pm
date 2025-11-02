@@ -26,6 +26,21 @@ func (v *Version) Validate() error {
 	return nil
 }
 
+func (v *Version) GreaterThan(otherVersion Version) bool {
+	switch {
+	case v.Major > otherVersion.Major:
+		return true
+	case v.Major < otherVersion.Major:
+		return false
+	case v.Minor > otherVersion.Minor:
+		return true
+	case v.Minor < otherVersion.Minor:
+		return false
+	default:
+		return false
+	}
+}
+
 func (v *Version) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {

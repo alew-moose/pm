@@ -64,7 +64,7 @@ func (c *Client) UploadPackage(packageName string, archivePath string) error {
 		_ = srcFile.Close()
 	}()
 
-	dstFile, err := c.client.OpenFile(remotePath, (os.O_WRONLY | os.O_CREATE | os.O_TRUNC))
+	dstFile, err := c.client.OpenFile(remotePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	if err != nil {
 		return fmt.Errorf("open remote file: %s", err)
 	}
@@ -80,7 +80,48 @@ func (c *Client) UploadPackage(packageName string, archivePath string) error {
 	// TODO: log verbose
 	_ = bytes
 
+	// TODO: check close files?
+
 	return nil
+}
+
+func (c *Client) DownloadPackage(packageName string) (string, error) {
+	// TODO: refactor
+	remotePath := fmt.Sprintf("%s/%s", c.config.Path, packageName)
+
+	srcFile, err := c.client.OpenFile(remotePath, os.O_RDONLY)
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		_ = srcFile.Close()
+	}()
+
+	// TODO: move out of here
+	tmpFilePattern := fmt.Sprintf("%s-*.tar.gz", packageName)
+	dstFile, err := os.CreateTemp("", tmpFilePattern)
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		_ = dstFile.Close()
+	}()
+
+	bytes, err := io.Copy(dstFile, srcFile)
+	if err != nil {
+		return "", fmt.Errorf("copy: %s", err)
+	}
+
+	// TODO: log verbose
+	_ = bytes
+
+	// TODO: check close files?
+
+	return dstFile.Name(), nil
+}
+
+func (c *Client) GetPackages() ([]os.FileInfo, error) {
+	return c.client.ReadDir(c.config.Path)
 }
 
 func sshConnect(host, port, user string) (*ssh.Client, error) {

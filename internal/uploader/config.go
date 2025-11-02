@@ -14,6 +14,7 @@ import (
 )
 
 type Config struct {
+	// TODO Name -> PackageName ?
 	Name    string          `json:"name" yaml:"name"`
 	Version version.Version `json:"ver" yaml:"ver"`
 	Targets []Target        `json:"targets" yaml:"targets"`

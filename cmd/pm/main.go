@@ -86,16 +86,14 @@ func download(sftpClient *sftp.Client, cmdConfigFile string) error {
 		return fmt.Errorf("parse downloader config: %s", err)
 	}
 
-	fmt.Printf("config: %#v\n", config)
+	downloader, err := downloader.New(config, sftpClient)
+	if err != nil {
+		return fmt.Errorf("create new downloader: %s", err)
+	}
 
-	// downloader, err := downloader.New(config, sftpClient)
-	// if err != nil {
-	// 	return fmt.Errorf("create new downloader: %s", err)
-	// }
-
-	// if err := downloader.Download(); err != nil {
-	// 	return fmt.Errorf("download: %s", err)
-	// }
+	if err := downloader.Download(); err != nil {
+		return fmt.Errorf("download: %s", err)
+	}
 
 	return nil
 }

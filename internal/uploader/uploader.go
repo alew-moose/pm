@@ -20,7 +20,7 @@ type PackageUploader struct {
 
 func New(config *Config, sftpClient *sftp.Client) (*PackageUploader, error) {
 	if err := config.Validate(); err != nil {
-		return nil, fmt.Errorf("validate config: %s", err)
+		return nil, fmt.Errorf("invalid config: %s", err)
 	}
 	pu := &PackageUploader{
 		config:     config,
@@ -30,12 +30,14 @@ func New(config *Config, sftpClient *sftp.Client) (*PackageUploader, error) {
 }
 
 func (u *PackageUploader) Upload() error {
-	packageExists, err := u.sftpClient.PackageExists(u.config.FileName())
+	// TODO: create dir unless exists
+	packageName := u.config.FileName()
+	packageExists, err := u.sftpClient.PackageExists(packageName)
 	if err != nil {
 		return fmt.Errorf("check if package exists: %s", err)
 	}
 	if packageExists {
-		return fmt.Errorf("package %s already exists", u.config.FileName())
+		return fmt.Errorf("package %s already exists", packageName)
 	}
 
 	paths, err := u.getPaths()
@@ -43,10 +45,22 @@ func (u *PackageUploader) Upload() error {
 		return fmt.Errorf("get paths: %s", err)
 	}
 
+	// XXX
+	for _, p := range paths {
+		fmt.Println(p)
+	}
+
 	archivePath, err := u.createArchive(paths)
 	if err != nil {
 		return fmt.Errorf("create archive: %s", err)
 	}
+	defer func() {
+		err := os.Remove(archivePath)
+		// TODO: Remove error check ?
+		if err != nil {
+			log.Printf("failed to remove %q: %s", archivePath, err)
+		}
+	}()
 
 	// XXX log verbose
 	log.Printf("archive: %s\n", archivePath)
@@ -59,6 +73,7 @@ func (u *PackageUploader) Upload() error {
 }
 
 func (u *PackageUploader) getPaths() ([]string, error) {
+	seen := make(map[string]struct{})
 	var paths []string
 	for _, target := range u.config.Targets {
 		files, err := filepath.Glob(target.Path)
@@ -69,7 +84,15 @@ func (u *PackageUploader) getPaths() ([]string, error) {
 		if err != nil {
 			return nil, fmt.Errorf("filter paths: %s", err)
 		}
-		paths = append(paths, files...)
+		for _, file := range files {
+			if _, ok := seen[file]; ok {
+				// TODO: verbose
+				log.Printf("duplicate file %q, skipping\n", file)
+				continue
+			}
+			seen[file] = struct{}{}
+			paths = append(paths, file)
+		}
 	}
 	return paths, nil
 }
@@ -91,6 +114,7 @@ func filterPaths(paths []string, exclude string) ([]string, error) {
 	return filtered, nil
 }
 
+// TODO: regexp.Replace -> strings.Replace
 var globStarRe = regexp.MustCompile(`\\\*`)
 var globQuestionRe = regexp.MustCompile(`\\\?`)
 
@@ -108,6 +132,9 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("create temp file: %s", err)
 	}
+	defer func() {
+		_ = f.Close()
+	}()
 
 	gzw := gzip.NewWriter(f)
 	defer func() {
@@ -129,6 +156,9 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 	}
 	if err := gzw.Close(); err != nil {
 		return "", fmt.Errorf("close gzip writer: %s", err)
+	}
+	if err := f.Close(); err != nil {
+		return "", fmt.Errorf("close temp file: %s", err)
 	}
 
 	return f.Name(), nil
