@@ -161,7 +161,7 @@ func (t *Target) UnmarshalYAML(node *yaml.Node) error {
 func yamlNodesToTarget(nodes []*yaml.Node) (Target, error) {
 	var target Target
 	i := 0
-	for i < len(nodes) {
+	for i < len(nodes)-1 {
 		key := nodes[i].Value
 		val := nodes[i+1].Value
 		switch key {
