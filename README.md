@@ -2,62 +2,45 @@
 
 [Задание](Task.md)
 
+## Usage
+```
+Usage:
+  ./pm create <create-config-file>
+  ./pm update <update-config-file>
+```
 
-- [o] TODO:
-  - [ ] readme:
-    - [ ] моя интерпретация packets в файле
-    - [ ] Makefile
-    - [ ] config in HOME
-    - [ ] always verbose
-    - [ ] сравнение версий
-    - [ ] absolute paths?
-    - [ ] exclude re
-    - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
-    - [ ] default version
-    - [ ] working directory
-    - [ ] нет возможности рекурсивно добавить файлы (double star)
-    - [ ] неэффективно хранить все пакеты в одной директории. Можно разбивать на поддиректории n-ной глубины или может заюзать sqlite
-    - [ ] ...
-  - [ ] packageDownloader -> downloader && packageUploader -> uploader ? Или наоборот?
-  - [X] validate config
-  - [X] log verbose:
-    - [X] downloader
-    - [X] uploader
-  - [X] regexp replace all -> strings replace all?
-  - [ ] version spec equal: можно String() -> "="
-  - [ ] version spec вообще должен бы поддерживать >=?Version <=?Version
-  - [ ] может, не ставить дефолтную версию, а просто матчить все, если version spec пустая?
-  - [ ] можно добавить version patch. + проставлять нули для 1, 1.0
-  - [ ] version spec -> version constraint
-  - [X] пакеты должны скачиваться по порядку
-  - [ ] package name: более строгая валидация?
-  - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
-  - [X] create path unless exists (in constructor?)
-  - [X] проверить, что сохраняются пермишны
-  - [X] overwrite warnings?
-  - [X] move package version & package version spec to pkg? + tests ?
-  - [X] name -> type PackageName + validation + move to pkg?
-  - [ ] recursive (double star)
-  - [X] что означает "packets" в файле для упаковки packet.json?
-  - [ ] tests for uploader/downloader configs from json/yaml
-  - [ ] rename from(json|yaml): make exported?
-  - [X] dedup files for uploader
-  - [X] pretty printer для слайса стрингеров
-  - [ ] разнобой с методами по значению/по указателю
-  - [ ] what is tar ErrInsecurePath ?
-  - [X] test absolute paths -- absolute paths work
-  - [X] test ../../ paths
-  - [ ] integration tests
-  - [ ] shorten packageVersion -> pv & packageVersionSpec -> pvs ?
-  - [X] sftpClient refactor : remotePath method
-  - [ ] сделать архиватор отдельно (упаковка, распаковка)
-  - [ ] enable more linters? https://golangci-lint.run/docs/linters/configuration/
-  - [X] там, где var smth, var error: может, сделать именованные возвращаемые? -- нет
-  - [ ] https://sftptogo.com/blog/go-sftp/ get host key
-  - [ ] валидации наслаиваются, кажется по нескольку раз вызываю
-  - [X] %q -> '%s' ? -- да вроде норм
-  - [X] %s -> %q ?
-  - [X] uploader:
-    - [X] download packets
-  - [X] remove "failed to"
-  - [ ] выводить статистику после загрузки/выгрузки? (кол-во файлов, общий размер)
+## Make
+```
+make build # собрать
+make test  # запустить тесты
+make lint  # прогнать линтер
+```
+
+## Config
+Читает конфиг в $HOME/.pm.json  
+host, port, user - хост, порт, юзер для подключения по ssh  
+path - директория для пакетов, относительно рабочей директории юзера  
+```
+{
+  "host": "somehost.com",
+  "port": "1234",
+  "user": "alex",
+  "path": "packages"
+}
+```
+
+
+## Допущения/ограничения
+* логинится только через ssh-agent
+* нет возможности добавить файлы рекурсивно (нет `**`)
+* при обработке `exclude` применяются регулярки (например `*.tmp` преобразуется в regexp `^.*\.tmp$`)
+* хранит все пакеты в одной директории — это неэффективно. Можно было бы разбить на поддиректории n-ной глубины по именам пакетов или может быть использовать хранить архивы в sqlite
+* всегда логирует в STDERR в режиме "verbose"
+* версии:
+  * при указании версий можно использовать только одно сравнение (например `<=1.0`, но не `>=1.0 <2.0`)
+  * если версия пакета не указана, используется дефолтная `>=0.1`
+  * версии указываются в формате major.minor, patch нет
+  * можно было бы использовать что-нибудь готовое для semver, например https://github.com/Masterminds/semver
+* можно было бы добавить вывод статистики: сколько файлов загружено/скачано, какой общий размер
+* в задании в файле пакета для упаковки `packet.json` есть поле `packets`. Не уверен для чего оно должно служить, я сделал так: указанные там пакеты скачиваются и распаковываются перед обработкой `targets`, то есть являются по сути зависимостями
+

@@ -1,8 +1,4 @@
-.PHONY: run build test lint
-
-run:
-	make build
-	./pm
+.PHONY: build test lint
 
 build:
 	go build -o pm ./cmd/pm
