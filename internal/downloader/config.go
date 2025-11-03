@@ -13,11 +13,11 @@ import (
 )
 
 type Config struct {
-	Packages []pkg.PackageVersionSpec `json:"packages" yaml:"packages"`
+	Packages []pkg.PackageVersionConstraint `json:"packages" yaml:"packages"`
 }
 
 func (c *Config) Validate() error {
-	packages := make(map[pkg.PackageVersionSpec]struct{}, len(c.Packages))
+	packages := make(map[pkg.PackageVersionConstraint]struct{}, len(c.Packages))
 	for _, p := range c.Packages {
 		if err := p.Validate(); err != nil {
 			return err
@@ -54,7 +54,7 @@ func ConfigFromFile(path string) (*Config, error) {
 		return nil, fmt.Errorf("%q format is not supported", ext)
 	}
 
-	FillDefaultVersionSpecs(config.Packages)
+	FillDefaultVersionConstraints(config.Packages)
 
 	return config, nil
 }
@@ -75,21 +75,19 @@ func fromYAML(b []byte) (*Config, error) {
 	return &config, nil
 }
 
-var emptyVersionSpec = version.VersionSpec{}
-var defaultVersionSpec = version.VersionSpec{
-	Version: version.Version{
-		Major: 0,
-		Minor: 1,
-	},
-	Comparison: version.ComparisonGreaterOrEqual,
+// TODO: remove?
+var emptyVersionConstraint = version.VersionConstraint{}
+var defaultVersionConstraint = version.VersionConstraint{
+	// TODO: fill?
 }
 
-func FillDefaultVersionSpecs(packages []pkg.PackageVersionSpec) {
+// TODO: remove?
+func FillDefaultVersionConstraints(packages []pkg.PackageVersionConstraint) {
 	for i := range packages {
 		p := &packages[i]
-		if p.VersionSpec == emptyVersionSpec {
-			log.Printf("using default version spec %s for package %s\n", defaultVersionSpec, p.Name)
-			p.VersionSpec = defaultVersionSpec
+		if p.VersionConstraint == emptyVersionConstraint {
+			log.Printf("using default version constraint %s for package %s\n", defaultVersionConstraint, p.Name)
+			p.VersionConstraint = defaultVersionConstraint
 		}
 	}
 }

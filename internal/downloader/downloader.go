@@ -61,7 +61,7 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 	}
 
 	// TODO: rename all found*
-	found := make(map[pkg.PackageVersionSpec]pkg.PackageVersion)
+	found := make(map[pkg.PackageVersionConstraint]pkg.PackageVersion)
 	for _, file := range files {
 		pv, err := pkg.PackageVersionFromString(file.Name())
 		if err != nil {
@@ -72,15 +72,16 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 			if !pvs.Match(pv) {
 				continue
 			}
-			if foundPV, ok := found[pvs]; !ok || pvs.VersionSpec.Version.GreaterThan(foundPV.Version) {
+			// TODO: correct?
+			if foundPV, ok := found[pvs]; !ok || pv.Version.GreaterThan(foundPV.Version) {
 				log.Printf("found packages for %s: %s\n", pvs, pv)
 				found[pvs] = pv
 			}
 		}
 	}
 
-	var notFound []pkg.PackageVersionSpec
-	foundPackages := make(map[pkg.PackageVersion][]pkg.PackageVersionSpec, len(found))
+	var notFound []pkg.PackageVersionConstraint
+	foundPackages := make(map[pkg.PackageVersion][]pkg.PackageVersionConstraint, len(found))
 	packages := make([]string, 0, len(foundPackages))
 	for _, pvs := range d.config.Packages {
 		if pv, ok := found[pvs]; ok {
@@ -99,7 +100,7 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 
 	for pv, pvss := range foundPackages {
 		if len(pvss) > 1 {
-			log.Printf("package %s satisfies several specs (%s), but will be downloaded and extracted only once\n", pv, stringersSliceToString(pvss))
+			log.Printf("package %s satisfies several constraints (%s), but will be downloaded and extracted only once\n", pv, stringersSliceToString(pvss))
 		}
 	}
 

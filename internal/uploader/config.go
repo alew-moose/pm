@@ -16,10 +16,10 @@ import (
 
 type Config struct {
 	// TODO Name -> PackageName ?
-	Name         pkg.PackageName          `json:"name" yaml:"name"`
-	Version      version.Version          `json:"ver" yaml:"ver"`
-	Targets      []Target                 `json:"targets" yaml:"targets"`
-	Dependencies []pkg.PackageVersionSpec `json:"packets" yaml:"packets"`
+	Name         pkg.PackageName                `json:"name" yaml:"name"`
+	Version      version.Version                `json:"ver" yaml:"ver"`
+	Targets      []Target                       `json:"targets" yaml:"targets"`
+	Dependencies []pkg.PackageVersionConstraint `json:"packets" yaml:"packets"`
 }
 
 // TODO: rename (package name?)
@@ -51,7 +51,8 @@ func ConfigFromFile(path string) (*Config, error) {
 		return nil, fmt.Errorf("%q format is not supported", ext)
 	}
 
-	downloader.FillDefaultVersionSpecs(config.Dependencies)
+	// TODO: remove?
+	downloader.FillDefaultVersionConstraints(config.Dependencies)
 	return config, nil
 }
 

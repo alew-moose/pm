@@ -63,6 +63,7 @@ func (v *Version) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
+// TODO: optional minor
 func VersionFromString(s string) (Version, error) {
 	var version Version
 	var err error
