@@ -11,7 +11,7 @@ import (
 type Comparison int
 
 const (
-	ComparisonEqual Comparison = iota
+	ComparisonEqual Comparison = iota + 1
 	ComparisonLess
 	ComparisonLessOrEqual
 	ComparisonGreater
