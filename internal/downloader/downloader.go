@@ -71,7 +71,7 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 				continue
 			}
 			if foundPV, ok := found[pvs]; !ok || pv.Version.GreaterThan(foundPV.Version) {
-				log.Printf("found packages for %s: %s\n", pvs, pv)
+				log.Printf("found package for %s: %s\n", pvs, pv)
 				found[pvs] = pv
 			}
 		}
