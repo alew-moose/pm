@@ -53,14 +53,12 @@ func (d *PackageDownloader) Download() error {
 	return nil
 }
 
-// TODO: refactor
 func (d *PackageDownloader) findPackages() ([]string, error) {
 	files, err := d.sftpClient.GetPackages()
 	if err != nil {
 		return nil, fmt.Errorf("get packages: %s", err)
 	}
 
-	// TODO: rename all found*
 	found := make(map[pkg.PackageVersionSpec]pkg.PackageVersion)
 	for _, file := range files {
 		pv, err := pkg.PackageVersionFromString(file.Name())
@@ -161,7 +159,7 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 			_ = f.Close()
 		}()
 
-		bytes, err := io.Copy(f, tr)
+		_, err := io.Copy(f, tr)
 		if err != nil {
 			return fmt.Errorf("copy: %s", err)
 		}
@@ -169,9 +167,6 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 		if err := f.Close(); err != nil {
 			return fmt.Errorf("close file: %s", err)
 		}
-
-		// TODO log verbose
-		_ = bytes
 	}
 
 	return nil

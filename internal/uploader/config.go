@@ -15,14 +15,12 @@ import (
 )
 
 type Config struct {
-	// TODO Name -> PackageName ?
 	Name         pkg.PackageName          `json:"name" yaml:"name"`
 	Version      version.Version          `json:"ver" yaml:"ver"`
 	Targets      []Target                 `json:"targets" yaml:"targets"`
 	Dependencies []pkg.PackageVersionSpec `json:"packets" yaml:"packets"`
 }
 
-// TODO: rename (package name?)
 func (c *Config) FileName() string {
 	return fmt.Sprintf("%s-%s", c.Name, c.Version)
 }

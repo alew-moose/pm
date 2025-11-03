@@ -7,7 +7,6 @@ import (
 	"github.com/alew-moose/pm/internal/version"
 )
 
-// TODO: tests
 type PackageVersion struct {
 	Name    PackageName
 	Version version.Version

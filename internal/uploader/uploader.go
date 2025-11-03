@@ -18,7 +18,6 @@ import (
 type PackageUploader struct {
 	config     *Config
 	sftpClient *sftp.Client
-	// TODO: rename?
 	downloader *downloader.PackageDownloader
 }
 

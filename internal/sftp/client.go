@@ -49,8 +49,6 @@ func (c *Client) CreatePackagesDirUnlessExists() error {
 	return c.client.MkdirAll(c.config.Path)
 }
 
-// TODO: rename name -> ?
-// TODO: version string->version
 func (c *Client) PackageExists(name string) (bool, error) {
 	path := fmt.Sprintf("%s/%s", c.config.Path, name)
 	_, err := c.client.Stat(path)
@@ -83,13 +81,10 @@ func (c *Client) UploadPackage(packageName string, archivePath string) error {
 		_ = dstFile.Close()
 	}()
 
-	bytes, err := io.Copy(dstFile, srcFile)
+	_, err := io.Copy(dstFile, srcFile)
 	if err != nil {
 		return fmt.Errorf("copy: %s", err)
 	}
-
-	// TODO: log verbose
-	_ = bytes
 
 	if err := srcFile.Close(); err != nil {
 		return fmt.Errorf("close %q: %s", srcFile.Name(), err)
@@ -123,13 +118,10 @@ func (c *Client) DownloadPackage(packageName string) (string, error) {
 
 	log.Printf("downloading package %s to %q\n", packageName, dstFile.Name())
 
-	bytes, err := io.Copy(dstFile, srcFile)
+	_, err := io.Copy(dstFile, srcFile)
 	if err != nil {
 		return "", fmt.Errorf("copy: %s", err)
 	}
-
-	// TODO: log verbose
-	_ = bytes
 
 	if err := srcFile.Close(); err != nil {
 		return "", fmt.Errorf("close %q: %s", srcFile.Name(), err)
