@@ -77,6 +77,8 @@ func upload(sftpClient *sftp.Client, cmdConfigFile string) error {
 		return fmt.Errorf("upload: %s", err)
 	}
 
+	log.Println("Package successfully created")
+
 	return nil
 }
 
@@ -94,6 +96,8 @@ func download(sftpClient *sftp.Client, cmdConfigFile string) error {
 	if err := downloader.Download(); err != nil {
 		return fmt.Errorf("download: %s", err)
 	}
+
+	log.Println("Package successfully updated")
 
 	return nil
 }
