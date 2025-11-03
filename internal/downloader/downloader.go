@@ -159,8 +159,7 @@ func (d *PackageDownloader) extractArchive(archivePath string) error {
 			_ = f.Close()
 		}()
 
-		_, err := io.Copy(f, tr)
-		if err != nil {
+		if _, err := io.Copy(f, tr); err != nil {
 			return fmt.Errorf("copy: %s", err)
 		}
 

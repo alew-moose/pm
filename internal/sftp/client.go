@@ -81,8 +81,7 @@ func (c *Client) UploadPackage(packageName string, archivePath string) error {
 		_ = dstFile.Close()
 	}()
 
-	_, err := io.Copy(dstFile, srcFile)
-	if err != nil {
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
 		return fmt.Errorf("copy: %s", err)
 	}
 
@@ -118,8 +117,7 @@ func (c *Client) DownloadPackage(packageName string) (string, error) {
 
 	log.Printf("downloading package %s to %q\n", packageName, dstFile.Name())
 
-	_, err := io.Copy(dstFile, srcFile)
-	if err != nil {
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
 		return "", fmt.Errorf("copy: %s", err)
 	}
 
