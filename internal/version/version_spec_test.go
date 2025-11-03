@@ -26,9 +26,11 @@ func TestVersionSpecFromString(t *testing.T) {
 		versionSpec, err := VersionSpecFromString(tt.str)
 		if err != nil && !tt.wantErr {
 			t.Errorf("failed test #%d: VersionSpecFromString(%q) returned error %q", ti, tt.str, err)
+			continue
 		}
 		if err == nil && tt.wantErr {
 			t.Errorf("failed test #%d: expected error from VersionSpecFromString(%q)", ti, tt.str)
+			continue
 		}
 		if !tt.wantErr && versionSpec != tt.wantVersionSpec {
 			t.Errorf("failed test #%d: VersionSpecFromString(%q): got %#v, want %#v", ti, tt.str, versionSpec, tt.wantVersionSpec)
@@ -77,11 +79,13 @@ func TestVersionSpecMatch(t *testing.T) {
 		version, err := VersionFromString(tt.versionStr)
 		if err != nil {
 			t.Errorf("failed test #%d: VersionFromString(%q) returned error %q", ti, tt.versionStr, err)
+			continue
 		}
 
 		versionSpec, err := VersionSpecFromString(tt.versionSpecStr)
 		if err != nil {
 			t.Errorf("failed test #%d: VersionSpecFromString(%q) returned error %q", ti, tt.versionSpecStr, err)
+			continue
 		}
 
 		match := versionSpec.Match(version)

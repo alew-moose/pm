@@ -105,8 +105,8 @@ func download(sftpClient *sftp.Client, cmdConfigFile string) error {
 func printUsage() {
 	usageStr := fmt.Sprintf(
 		"Usage:\n"+
-			"\t%[1]s create <create-config-file>\n"+
-			"\t%[1]s update <update-config-file>\n",
+			"\t%[1]s create <create-config-file.json | create-config-file.yaml>\n"+
+			"\t%[1]s update <update-config-file.json | update-config-file.yaml>\n",
 		os.Args[0],
 	)
 	fmt.Fprintln(os.Stderr, usageStr)

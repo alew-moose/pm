@@ -23,9 +23,11 @@ func TestVersionFromString(t *testing.T) {
 		version, err := VersionFromString(tt.str)
 		if err != nil && !tt.wantErr {
 			t.Errorf("failed test #%d: VersionFromString(%q) returned error %q", ti, tt.str, err)
+			continue
 		}
 		if err == nil && tt.wantErr {
 			t.Errorf("failed test #%d: expected error from VersionFromString(%q)", ti, tt.str)
+			continue
 		}
 		if !tt.wantErr && version != tt.wantVersion {
 			t.Errorf("failed test #%d: VersionFromString(%q): got %#v, want %#v", ti, tt.str, version, tt.wantVersion)

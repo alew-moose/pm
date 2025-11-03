@@ -88,11 +88,11 @@ func (u *PackageUploader) getPaths() ([]string, error) {
 	for _, target := range u.config.Targets {
 		log.Printf("find files for target %q excluding %q\n", target.Path, target.Exclude)
 		files, err := filepath.Glob(target.Path)
-		for _, file := range files {
-			log.Printf("found file %q\n", file)
-		}
 		if err != nil {
 			return nil, fmt.Errorf("glob %q: %s", target.Path, err)
+		}
+		for _, file := range files {
+			log.Printf("found file %q\n", file)
 		}
 		files, err = filterPaths(files, target.Exclude)
 		if err != nil {
@@ -160,7 +160,7 @@ func (u *PackageUploader) createArchive(paths []string) (string, error) {
 	for _, path := range paths {
 		log.Printf("adding file %q\n", path)
 		if err := u.addFile(tw, path); err != nil {
-			return "", fmt.Errorf("upload %q: %s", path, err)
+			return "", fmt.Errorf("add file %q: %s", path, err)
 		}
 	}
 

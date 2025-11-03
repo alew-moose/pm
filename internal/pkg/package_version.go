@@ -38,9 +38,6 @@ func PackageVersionFromString(s string) (PackageVersion, error) {
 	}
 
 	packageVersion.Name = PackageName(matches[1])
-	if err := packageVersion.Name.Validate(); err != nil {
-		return packageVersion, err
-	}
 
 	packageVersion.Version, err = version.VersionFromString(matches[2])
 	if err != nil {

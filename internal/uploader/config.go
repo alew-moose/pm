@@ -101,7 +101,7 @@ func (t Target) Validate() error {
 	return nil
 }
 
-func (t *Target) FromMap(m map[string]any) error {
+func (t *Target) fromMap(m map[string]any) error {
 	path, ok := m["path"]
 	if !ok {
 		return errors.New("no path")
@@ -133,7 +133,7 @@ func (t *Target) UnmarshalJSON(b []byte) error {
 	case string:
 		t.Path = target
 	case map[string]any:
-		if err := t.FromMap(target); err != nil {
+		if err := t.fromMap(target); err != nil {
 			return fmt.Errorf("parse target %q: %s", b, err)
 		}
 	default:

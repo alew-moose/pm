@@ -70,7 +70,7 @@ func (d *PackageDownloader) findPackages() ([]string, error) {
 			if !pvs.Match(pv) {
 				continue
 			}
-			if foundPV, ok := found[pvs]; !ok || pvs.VersionSpec.Version.GreaterThan(foundPV.Version) {
+			if foundPV, ok := found[pvs]; !ok || pv.Version.GreaterThan(foundPV.Version) {
 				log.Printf("found packages for %s: %s\n", pvs, pv)
 				found[pvs] = pv
 			}

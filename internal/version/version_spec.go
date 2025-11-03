@@ -149,23 +149,20 @@ func VersionSpecFromString(s string) (VersionSpec, error) {
 	}
 
 	versionSpec.Comparison = ComparisonEqual
-	if len(matches) == 3 {
-		switch matches[1] {
-		case "=":
-			versionSpec.Comparison = ComparisonEqual
-		case "<":
-			versionSpec.Comparison = ComparisonLess
-		case "<=":
-			versionSpec.Comparison = ComparisonLessOrEqual
-		case ">":
-			versionSpec.Comparison = ComparisonGreater
-		case ">=":
-			versionSpec.Comparison = ComparisonGreaterOrEqual
-		}
-		matches = matches[2:]
+	switch matches[1] {
+	case "=":
+		versionSpec.Comparison = ComparisonEqual
+	case "<":
+		versionSpec.Comparison = ComparisonLess
+	case "<=":
+		versionSpec.Comparison = ComparisonLessOrEqual
+	case ">":
+		versionSpec.Comparison = ComparisonGreater
+	case ">=":
+		versionSpec.Comparison = ComparisonGreaterOrEqual
 	}
 
-	versionSpec.Version, err = VersionFromString(matches[0])
+	versionSpec.Version, err = VersionFromString(matches[2])
 	if err != nil {
 		return versionSpec, err
 	}
