@@ -21,7 +21,7 @@ const (
 func (c Comparison) String() string {
 	switch c {
 	case ComparisonEqual:
-		return ""
+		return "="
 	case ComparisonLess:
 		return "<"
 	case ComparisonLessOrEqual:
@@ -137,7 +137,7 @@ func (vs *VersionSpec) UnmarshalYAML(node *yaml.Node) error {
 	return nil
 }
 
-var versionSpecRe = regexp.MustCompile(`^([><]=?)?(.+)$`)
+var versionSpecRe = regexp.MustCompile(`^([><]=?|=)?(.+)$`)
 
 func VersionSpecFromString(s string) (VersionSpec, error) {
 	var versionSpec VersionSpec
@@ -151,6 +151,8 @@ func VersionSpecFromString(s string) (VersionSpec, error) {
 	versionSpec.Comparison = ComparisonEqual
 	if len(matches) == 3 {
 		switch matches[1] {
+		case "=":
+			versionSpec.Comparison = ComparisonEqual
 		case "<":
 			versionSpec.Comparison = ComparisonLess
 		case "<=":

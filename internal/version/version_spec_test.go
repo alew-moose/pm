@@ -12,11 +12,11 @@ func TestVersionSpecFromString(t *testing.T) {
 	}{
 		{str: "0.0", wantErr: true},
 		{str: "<>1.2", wantErr: true},
-		{str: "=1.2", wantErr: true},
 		{str: ">>1.2", wantErr: true},
 		{str: "?1.2", wantErr: true},
 		{str: "x1.2", wantErr: true},
 		{str: "1.2", wantVersionSpec: VersionSpec{Comparison: ComparisonEqual, Version: Version{Major: 1, Minor: 2}}},
+		{str: "=1.2", wantVersionSpec: VersionSpec{Comparison: ComparisonEqual, Version: Version{Major: 1, Minor: 2}}},
 		{str: "<1.2", wantVersionSpec: VersionSpec{Comparison: ComparisonLess, Version: Version{Major: 1, Minor: 2}}},
 		{str: "<=1.2", wantVersionSpec: VersionSpec{Comparison: ComparisonLessOrEqual, Version: Version{Major: 1, Minor: 2}}},
 		{str: ">1.2", wantVersionSpec: VersionSpec{Comparison: ComparisonGreater, Version: Version{Major: 1, Minor: 2}}},

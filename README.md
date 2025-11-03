@@ -13,6 +13,7 @@
     - [ ] absolute paths?
     - [ ] exclude re
     - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
+    - [ ] default version
     - [ ] working directory
     - [ ] нет возможности рекурсивно добавить файлы (double star)
     - [ ] неэффективно хранить все пакеты в одной директории. Можно разбивать на поддиректории n-ной глубины или может заюзать sqlite
@@ -23,6 +24,11 @@
     - [X] downloader
     - [X] uploader
   - [X] regexp replace all -> strings replace all?
+  - [ ] version spec equal: можно String() -> "="
+  - [ ] version spec вообще должен бы поддерживать >=?Version <=?Version
+  - [ ] может, не ставить дефолтную версию, а просто матчить все, если version spec пустая?
+  - [ ] можно добавить version patch. + проставлять нули для 1, 1.0
+  - [ ] version spec -> version constraint
   - [X] пакеты должны скачиваться по порядку
   - [ ] package name: более строгая валидация?
   - [ ] нужны другие варианты подключения по ssh, кроме ssh-agent?
